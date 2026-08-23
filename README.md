@@ -1,5 +1,7 @@
 # 🍸 Cocktail Party Planner
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FHeraldago%2Fcocktailplanner)
+
 > Web app interattiva e reattiva per pianificare cocktail party con calcolo matematico esatto della lista spesa in bottiglie reperibili in Italia (`Math.ceil`), stima del budget totale e a persona, utensili bar con alternative fai-da-te (DIY) e istruzioni step-by-step per singolo drink o caraffa (Batch Party).
 
 ---
