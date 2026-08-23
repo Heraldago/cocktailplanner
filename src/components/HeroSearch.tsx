@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, X, Flame, GlassWater, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { Language, TRANSLATIONS } from '../i18n/translations';
-import { TasteCategory, StrengthCategory } from '../utils/semiotics';
+import { TasteCategory, StrengthCategory, BauhausShape as ShapeType } from '../utils/semiotics';
 import { BauhausShape } from './BauhausShape';
 
 interface HeroSearchProps {
@@ -30,18 +30,18 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
   const [showLegend, setShowLegend] = useState(false);
   const t = TRANSLATIONS[lang];
 
-  const tasteOptions: Array<{ key: TasteCategory; label: string; icon: string }> = [
-    { key: 'all', label: t.filter.all, icon: '✦' },
-    { key: 'bitter', label: t.filter.bitter, icon: '⏹️' },
-    { key: 'sweet-sour', label: t.filter.sweetSour, icon: '🔺' },
-    { key: 'dry', label: t.filter.dry, icon: '⚪' },
+  const tasteOptions: Array<{ key: TasteCategory; label: string; shape?: ShapeType; color?: 'yellow' | 'blue' | 'red' }> = [
+    { key: 'all', label: t.filter.all },
+    { key: 'bitter', label: t.filter.bitter, shape: 'square', color: 'yellow' },
+    { key: 'sweet-sour', label: t.filter.sweetSour, shape: 'triangle', color: 'blue' },
+    { key: 'dry', label: t.filter.dry, shape: 'circle', color: 'red' },
   ];
 
-  const strengthOptions: Array<{ key: StrengthCategory; label: string; colorClass: string }> = [
-    { key: 'all', label: t.filter.allStrength, colorClass: 'bg-white' },
-    { key: 'light', label: t.filter.light, colorClass: 'bg-[#F0C020]' },
-    { key: 'medium', label: t.filter.medium, colorClass: 'bg-[#1040C0] text-white' },
-    { key: 'strong', label: t.filter.strong, colorClass: 'bg-[#D02020] text-white' },
+  const strengthOptions: Array<{ key: StrengthCategory; label: string; swatchBg?: string; textClass?: string }> = [
+    { key: 'all', label: t.filter.allStrength },
+    { key: 'light', label: t.filter.light, swatchBg: 'bg-[#F0C020]' },
+    { key: 'medium', label: t.filter.medium, swatchBg: 'bg-[#1040C0]' },
+    { key: 'strong', label: t.filter.strong, swatchBg: 'bg-[#D02020]' },
   ];
 
   return (
@@ -83,7 +83,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                     <span className="font-black uppercase tracking-wider text-[#121212] block border-b border-[#121212]/20 pb-1">
                       {t.legend.tasteProfiles}
                     </span>
-                    <div className="space-y-1.5 text-[11px] font-medium text-[#121212]">
+                    <div className="space-y-2 text-[11px] font-medium text-[#121212]">
                       <div className="flex items-center gap-2">
                         <BauhausShape shape="square" color="yellow" size={18} />
                         <span><strong>Quadrato:</strong> Bitter & Aperitivo</span>
@@ -104,17 +104,17 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                     <span className="font-black uppercase tracking-wider text-[#121212] block border-b border-[#121212]/20 pb-1">
                       {t.legend.strengths}
                     </span>
-                    <div className="space-y-1.5 text-[11px] font-medium text-[#121212]">
+                    <div className="space-y-2 text-[11px] font-medium text-[#121212]">
                       <div className="flex items-center gap-2">
-                        <span className="w-3.5 h-3.5 bg-[#F0C020] border border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
+                        <span className="w-4 h-4 bg-[#F0C020] border-2 border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
                         <span><strong>Giallo:</strong> Leggero (&lt;15% ABV)</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-3.5 h-3.5 bg-[#1040C0] border border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
+                        <span className="w-4 h-4 bg-[#1040C0] border-2 border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
                         <span><strong>Blu:</strong> Medio (15-25% ABV)</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-3.5 h-3.5 bg-[#D02020] border border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
+                        <span className="w-4 h-4 bg-[#D02020] border-2 border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
                         <span><strong>Rosso:</strong> Forte (&gt;25% ABV)</span>
                       </div>
                     </div>
@@ -162,10 +162,10 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
               </div>
             </div>
 
-            {/* 1. Filter by Taste Profile (Shapes) */}
+            {/* 1. Filter by Taste Profile (Shapes with real SVG BauhausShape) */}
             <div className="space-y-1.5">
               <span className="text-[11px] font-black uppercase tracking-wider text-[#121212]/80 flex items-center gap-1.5">
-                <span className="w-2 h-2 bg-[#D02020] inline-block border border-[#121212]" />
+                <span className="w-2.5 h-2.5 bg-[#D02020] inline-block border border-[#121212]" />
                 {t.hero.filterTasteLabel}
               </span>
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -176,13 +176,22 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                       key={opt.key}
                       type="button"
                       onClick={() => onTasteChange(opt.key)}
-                      className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 border-[#121212] transition-all duration-100 ${
+                      className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider border-2 border-[#121212] flex items-center gap-2 transition-all duration-100 ${
                         isActive
                           ? 'bg-[#1040C0] text-white shadow-[3px_3px_0px_0px_#121212] -translate-y-0.5'
                           : 'bg-[#FFFFFF] text-[#121212] shadow-[2px_2px_0px_0px_#121212] hover:bg-[#F0F0F0]'
                       }`}
                     >
-                      {opt.label}
+                      {opt.shape && opt.color ? (
+                        <BauhausShape shape={opt.shape} color={opt.color} size={16} />
+                      ) : (
+                        <div className="flex items-center gap-0.5">
+                          <span className="w-2 h-2 rounded-full bg-[#D02020] border border-[#121212]" />
+                          <span className="w-2 h-2 bg-[#1040C0] border border-[#121212]" />
+                          <span className="w-2 h-2 bg-[#F0C020] clip-triangle" />
+                        </div>
+                      )}
+                      <span>{opt.label}</span>
                     </button>
                   );
                 })}
@@ -192,7 +201,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
             {/* 2. Filter by Alcohol Strength (Colors) */}
             <div className="space-y-1.5 pt-0.5">
               <span className="text-[11px] font-black uppercase tracking-wider text-[#121212]/80 flex items-center gap-1.5">
-                <span className="w-2 h-2 bg-[#F0C020] inline-block border border-[#121212]" />
+                <span className="w-2.5 h-2.5 bg-[#F0C020] inline-block border border-[#121212]" />
                 {t.hero.filterStrengthLabel}
               </span>
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -203,13 +212,18 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                       key={opt.key}
                       type="button"
                       onClick={() => onStrengthChange(opt.key)}
-                      className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 border-[#121212] transition-all duration-100 ${
+                      className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider border-2 border-[#121212] flex items-center gap-2 transition-all duration-100 ${
                         isActive
-                          ? `${opt.key === 'all' ? 'bg-[#121212] text-white' : opt.colorClass} shadow-[3px_3px_0px_0px_#121212] -translate-y-0.5`
+                          ? 'bg-[#121212] text-white shadow-[3px_3px_0px_0px_#D02020] -translate-y-0.5'
                           : 'bg-[#FFFFFF] text-[#121212] shadow-[2px_2px_0px_0px_#121212] hover:bg-[#F0F0F0]'
                       }`}
                     >
-                      {opt.label}
+                      {opt.swatchBg ? (
+                        <span className={`w-3.5 h-3.5 ${opt.swatchBg} border-2 border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]`} />
+                      ) : (
+                        <span className="w-2.5 h-2.5 bg-[#121212] inline-block" />
+                      )}
+                      <span>{opt.label}</span>
                     </button>
                   );
                 })}
