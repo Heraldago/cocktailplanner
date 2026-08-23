@@ -103,8 +103,12 @@ export const App: React.FC = () => {
     setPartyConfig((prev) => ({ ...prev, guestsCount: count }));
   };
 
-  const handleChangeIntensity = (intensity: PartyIntensity) => {
-    setPartyConfig((prev) => ({ ...prev, intensity }));
+  const handleChangeIntensity = (intensity: PartyIntensity, drinks?: number) => {
+    setPartyConfig((prev) => ({
+      ...prev,
+      intensity,
+      drinksPerPerson: drinks !== undefined ? drinks : undefined,
+    }));
   };
 
   const handleResetSearch = () => {

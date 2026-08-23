@@ -5,7 +5,7 @@ export type CocktailCategory =
   | 'IBA Contemporary Classics'
   | 'IBA New Era Drinks';
 
-export type PartyIntensity = 'aperitivo' | 'standard' | 'festa';
+export type PartyIntensity = 'aperitivo' | 'standard' | 'festa' | 'maratona' | 'openbar';
 
 export type BrandTier = 'standard' | 'premium';
 
@@ -86,7 +86,7 @@ export interface PartyConfig {
   cocktailId: string;
   guestsCount: number;
   intensity: PartyIntensity;
-  customDrinksPerPerson?: number;
+  drinksPerPerson?: number; // 1, 2, 3, 4, 5
   brandTier: 'standard' | 'premium';
 }
 

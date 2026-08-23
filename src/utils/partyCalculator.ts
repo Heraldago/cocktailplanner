@@ -1,20 +1,35 @@
-import { Cocktail, PartyConfig, PartyCalculationResult, CalculatedIngredient, Ingredient, BrandTier } from '../types/cocktail';
+import { Cocktail, PartyConfig, PartyCalculationResult, CalculatedIngredient, Ingredient, BrandTier, PartyIntensity } from '../types/cocktail';
 
-export const INTENSITY_DRINKS_MAP: Record<PartyConfig['intensity'], { label: string; drinks: number; description: string }> = {
+export const INTENSITY_DRINKS_MAP: Record<PartyIntensity, { label: string; drinks: number; description: string; emoji: string }> = {
   aperitivo: {
     label: 'Aperitivo (1 Drink)',
     drinks: 1,
-    description: '1 drink a testa, perfetto per un brindisi iniziale o aperitivo leggero',
+    description: '1 drink a testa, perfetto per un brindisi iniziale o aperitivo leggero.',
+    emoji: '🍸',
   },
   standard: {
     label: 'Standard (2 Drink)',
     drinks: 2,
-    description: '2 drink a testa, la media ideale per una cena o serata tra amici',
+    description: '2 drink a testa, la media ideale per una cena o serata tra amici.',
+    emoji: '🥂',
   },
   festa: {
-    label: 'Festa (3+ Drink)',
-    drinks: 3.5,
-    description: '3-4 drink a testa, per una vera festa prolungata fino a tarda notte',
+    label: 'Festa (3 Drink)',
+    drinks: 3,
+    description: '3 drink a testa, per una vera festa con musica e balli.',
+    emoji: '🎉',
+  },
+  maratona: {
+    label: 'Maratona (4 Drink)',
+    drinks: 4,
+    description: '4 drink a testa, per serate lunghe e impegnative fino a notte fonda.',
+    emoji: '⚡',
+  },
+  openbar: {
+    label: 'Open Bar (5 Drink)',
+    drinks: 5,
+    description: '5 drink a testa, livello massimo open bar per eventi scatenati.',
+    emoji: '🔥',
   },
 };
 
@@ -103,9 +118,9 @@ function getEstimatedUnitPrice(ing: Ingredient, tier: BrandTier): number {
 }
 
 export function calculatePartyRequirements(cocktail: Cocktail, config: PartyConfig): PartyCalculationResult {
-  const drinksPerPerson = config.customDrinksPerPerson !== undefined
-    ? config.customDrinksPerPerson
-    : INTENSITY_DRINKS_MAP[config.intensity].drinks;
+  const drinksPerPerson = config.drinksPerPerson !== undefined
+    ? config.drinksPerPerson
+    : (INTENSITY_DRINKS_MAP[config.intensity]?.drinks || 2);
 
   const totalDrinks = Math.round(config.guestsCount * drinksPerPerson);
 
@@ -215,7 +230,7 @@ export function generateShoppingListText(cocktail: Cocktail, config: PartyConfig
   text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   text += `Cocktail: ${cocktail.name.toUpperCase()}\n`;
   text += `Invitati: ${config.guestsCount} persone (${result.servingsSummary})\n`;
-  text += `Livello: ${INTENSITY_DRINKS_MAP[config.intensity].label}\n`;
+  text += `Livello: ${INTENSITY_DRINKS_MAP[config.intensity]?.label || `${result.drinksPerPerson} drink a testa`}\n`;
   text += `Fascia Brand: ${config.brandTier === 'premium' ? 'PREMIUM (Enoteca)' : 'STANDARD (Supermercato)'}\n\n`;
 
   text += `💰 STIMA SPESA & QUOTA:\n`;
