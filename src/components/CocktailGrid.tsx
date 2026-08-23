@@ -3,6 +3,7 @@ import { Cocktail } from '../types/cocktail';
 import { Wine, Check } from 'lucide-react';
 import { getCocktailSemiotics } from '../utils/semiotics';
 import { Language, TRANSLATIONS } from '../i18n/translations';
+import { BauhausShape } from './BauhausShape';
 
 interface CocktailGridProps {
   cocktails: Cocktail[];
@@ -73,26 +74,24 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
                   : 'bg-white shadow-[4px_4px_0px_0px_#121212] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#121212]'
               }`}
             >
-              {/* Corner Badge: Semiotic Shape + Color OR Selection State */}
-              <div className="absolute top-3 right-3 flex items-center gap-1.5">
-                {isSelected ? (
-                  <span className="flex items-center gap-1 px-2 py-0.5 bg-[#D02020] text-white text-[10px] font-black uppercase border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212]">
+              {/* Corner Badge: Pure Bauhaus Geometric Shape + Color */}
+              <div className="absolute top-3 right-3 flex items-center gap-2">
+                {isSelected && (
+                  <span className="flex items-center gap-1 px-1.5 py-0.5 bg-[#D02020] text-white text-[9px] font-black uppercase border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212]">
                     <Check className="w-3 h-3" /> {t.selectedBadge}
                   </span>
-                ) : (
-                  <div
-                    className="flex items-center gap-1 px-1.5 py-0.5 border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] text-xs font-black"
-                    style={{ backgroundColor: semiotics.colorHex, color: semiotics.color === 'yellow' ? '#121212' : '#FFFFFF' }}
-                    title={`${tasteLabel} • ${strengthLabel}`}
-                  >
-                    <span>{semiotics.shapeEmoji}</span>
-                    <span className="text-[9px] uppercase tracking-wider">{cocktail.abv}%</span>
-                  </div>
                 )}
+                {/* Pure Bauhaus Shape (Square=Bitter, Triangle=Dolce/Sour, Circle=Dry; Yellow=Light, Blue=Medium, Red=Strong) */}
+                <BauhausShape
+                  shape={semiotics.shape}
+                  color={semiotics.color}
+                  size={24}
+                  title={`${tasteLabel} (${semiotics.shape === 'square' ? 'Quadrato' : semiotics.shape === 'triangle' ? 'Triangolo' : 'Cerchio'}) • ${strengthLabel}`}
+                />
               </div>
 
               <div>
-                {/* Taste & Category badges */}
+                {/* Taste & Category tag */}
                 <div className="mb-2 flex items-center gap-1.5 flex-wrap pr-16">
                   <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-[#F0F0F0] border border-[#121212] text-[#121212] inline-block">
                     {tasteLabel}
@@ -131,14 +130,8 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
                 <span className="text-[11px] uppercase text-[#121212]/80 truncate max-w-[150px]">
                   {cocktail.glass.split(' (')[0]}
                 </span>
-                <span
-                  className="px-1.5 py-0.5 text-[10px] uppercase font-black border border-[#121212]"
-                  style={{
-                    backgroundColor: semiotics.colorHex,
-                    color: semiotics.color === 'yellow' ? '#121212' : '#FFFFFF',
-                  }}
-                >
-                  {semiotics.strength === 'light' ? 'Light' : semiotics.strength === 'medium' ? 'Medium' : 'Strong'} • {cocktail.abv}%
+                <span className="px-2 py-0.5 text-[10px] uppercase font-black bg-[#121212] text-white border border-[#121212]">
+                  ~{cocktail.abv}% ABV
                 </span>
               </div>
             </div>

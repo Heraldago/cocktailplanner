@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Search, X, Flame, GlassWater, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { Language, TRANSLATIONS } from '../i18n/translations';
 import { TasteCategory, StrengthCategory } from '../utils/semiotics';
+import { BauhausShape } from './BauhausShape';
 
 interface HeroSearchProps {
   searchQuery: string;
@@ -75,30 +76,48 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
 
             {/* Collapsible Semiotic Legend Box */}
             {showLegend && (
-              <div className="p-3.5 sm:p-4 bg-[#F0F0F0] border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] space-y-2.5 animate-fadeIn">
+              <div className="p-3.5 sm:p-4 bg-[#F0F0F0] border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] space-y-3 animate-fadeIn">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   {/* Shapes / Taste */}
-                  <div className="bg-white p-2.5 border-2 border-[#121212]">
-                    <span className="font-black uppercase tracking-wider text-[#121212] block mb-1">
+                  <div className="bg-white p-3 border-2 border-[#121212] space-y-2">
+                    <span className="font-black uppercase tracking-wider text-[#121212] block border-b border-[#121212]/20 pb-1">
                       {t.legend.tasteProfiles}
                     </span>
-                    <ul className="space-y-1 text-[11px] font-medium text-[#121212]/90">
-                      <li>• {t.legend.squareBitter}</li>
-                      <li>• {t.legend.triangleSweetSour}</li>
-                      <li>• {t.legend.circleDry}</li>
-                    </ul>
+                    <div className="space-y-1.5 text-[11px] font-medium text-[#121212]">
+                      <div className="flex items-center gap-2">
+                        <BauhausShape shape="square" color="yellow" size={18} />
+                        <span><strong>Quadrato:</strong> Bitter & Aperitivo</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <BauhausShape shape="triangle" color="blue" size={18} />
+                        <span><strong>Triangolo:</strong> Dolce & Sour / Tropicale</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <BauhausShape shape="circle" color="red" size={18} />
+                        <span><strong>Cerchio:</strong> Dry & Spirit-Forward</span>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Colors / Strength */}
-                  <div className="bg-white p-2.5 border-2 border-[#121212]">
-                    <span className="font-black uppercase tracking-wider text-[#121212] block mb-1">
+                  <div className="bg-white p-3 border-2 border-[#121212] space-y-2">
+                    <span className="font-black uppercase tracking-wider text-[#121212] block border-b border-[#121212]/20 pb-1">
                       {t.legend.strengths}
                     </span>
-                    <ul className="space-y-1 text-[11px] font-medium text-[#121212]/90">
-                      <li>• {t.legend.light}</li>
-                      <li>• {t.legend.medium}</li>
-                      <li>• {t.legend.strong}</li>
-                    </ul>
+                    <div className="space-y-1.5 text-[11px] font-medium text-[#121212]">
+                      <div className="flex items-center gap-2">
+                        <span className="w-3.5 h-3.5 bg-[#F0C020] border border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
+                        <span><strong>Giallo:</strong> Leggero (&lt;15% ABV)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="w-3.5 h-3.5 bg-[#1040C0] border border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
+                        <span><strong>Blu:</strong> Medio (15-25% ABV)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="w-3.5 h-3.5 bg-[#D02020] border border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
+                        <span><strong>Rosso:</strong> Forte (&gt;25% ABV)</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
