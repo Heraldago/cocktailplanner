@@ -1,4 +1,5 @@
 import { Cocktail, PartyConfig, PartyCalculationResult, CalculatedIngredient, Ingredient, BrandTier, PartyIntensity } from '../types/cocktail';
+import { Language } from '../i18n/translations';
 
 export const INTENSITY_DRINKS_MAP: Record<PartyIntensity, { label: string; drinks: number; description: string; emoji: string }> = {
   aperitivo: {
@@ -159,7 +160,6 @@ export function calculatePartyRequirements(cocktail: Cocktail, config: PartyConf
     // Effective cost: only the portion used (crucial for expensive bitters/spirits)
     let effectiveCost = totalCost;
     if (ing.categoryType === 'bitters') {
-      // Bitters are used in dashes (a 200ml bottle lasts hundreds of drinks)
       effectiveCost = Number((totalDrinks * 0.15).toFixed(2));
     } else if (ing.bottleSizeMl > 0 && totalMl > 0) {
       const fractionUsed = Math.min(bottlesNeeded, totalMl / ing.bottleSizeMl);
@@ -225,12 +225,63 @@ export function calculatePartyRequirements(cocktail: Cocktail, config: PartyConf
   };
 }
 
-export function generateShoppingListText(cocktail: Cocktail, config: PartyConfig, result: PartyCalculationResult): string {
+export function generateShoppingListText(
+  cocktail: Cocktail,
+  config: PartyConfig,
+  result: PartyCalculationResult,
+  lang: Language = 'it'
+): string {
+  if (lang === 'en') {
+    let text = `🍹 COCKTAIL PARTY PLANNER - SHOPPING LIST & BUDGET\n`;
+    text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    text += `Cocktail: ${cocktail.name.toUpperCase()}\n`;
+    text += `Guests: ${config.guestsCount} guests (${result.totalDrinks} total drinks)\n`;
+    text += `Drinks per Guest: ${result.drinksPerPerson} drink/guest\n`;
+    text += `Brand Tier: ${config.brandTier === 'premium' ? 'PREMIUM (Wine Shop)' : 'STANDARD (Supermarket)'}\n\n`;
+
+    text += `💰 ESTIMATED BUDGET & SPLIT:\n`;
+    text += `• Total at checkout: ~€ ${result.totalShoppingCost.toFixed(2)}\n`;
+    text += `• Cost per guest: ~€ ${result.costPerPerson.toFixed(2)} / guest\n`;
+    text += `• Real cost per drink: ~€ ${result.effectiveCostPerDrink.toFixed(2)} / drink\n`;
+    text += `• Estimated bar savings: ~€ ${result.barSavingsEstimate.toFixed(2)} 🎉\n\n`;
+
+    text += `🛒 BOTTLES & INGREDIENTS TO BUY:\n`;
+    result.ingredients.forEach((ing, index) => {
+      if (ing.totalPieces > 0) {
+        text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded} pack(s) (${ing.totalPieces} pcs) (~€ ${ing.totalCost.toFixed(2)})\n`;
+        text += `   👉 Recommended: ${ing.recommendedBrand}\n`;
+      } else if (ing.totalMl > 0) {
+        const cl = (ing.totalMl / 10).toFixed(0);
+        text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded}x ${ing.bottleSizeMl}ml bottles (~€ ${ing.totalCost.toFixed(2)}) [Needed: ${ing.totalMl}ml / ${cl}cl]\n`;
+        text += `   👉 Recommended brand: ${ing.recommendedBrand}\n`;
+        if (ing.leftoverMl > 0) {
+          text += `   ℹ️ Leftover ~${ing.leftoverMl}ml (${ing.leftoverPercentage}% of bottle)\n`;
+        }
+      } else {
+        text += `${index + 1}. [ ] ${ing.name}: 1 pack (~€ ${ing.totalCost.toFixed(2)})\n`;
+        text += `   👉 Recommended: ${ing.recommendedBrand}\n`;
+      }
+    });
+
+    text += `\n🧊 ICE:\n`;
+    text += `• [ ] ${result.iceBags2Kg} bags of 2kg ice (~€ ${result.iceTotalCost.toFixed(2)}) [Needed: ~${result.totalIceKg} kg]\n`;
+
+    text += `\n🍸 TOOLS & DIY HACKS:\n`;
+    cocktail.equipment.forEach((eq) => {
+      text += `• ${eq.tool} -> Kitchen DIY: ${eq.diyAlternative}\n`;
+    });
+
+    text += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    text += `Created with Cocktail Party Planner | Bauhaus Edition`;
+
+    return text;
+  }
+
   let text = `🍹 COCKTAIL PARTY PLANNER - LISTA SPESA & BUDGET\n`;
   text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   text += `Cocktail: ${cocktail.name.toUpperCase()}\n`;
   text += `Invitati: ${config.guestsCount} persone (${result.servingsSummary})\n`;
-  text += `Livello: ${INTENSITY_DRINKS_MAP[config.intensity]?.label || `${result.drinksPerPerson} drink a testa`}\n`;
+  text += `Livello: ${result.drinksPerPerson} drink a testa\n`;
   text += `Fascia Brand: ${config.brandTier === 'premium' ? 'PREMIUM (Enoteca)' : 'STANDARD (Supermercato)'}\n\n`;
 
   text += `💰 STIMA SPESA & QUOTA:\n`;

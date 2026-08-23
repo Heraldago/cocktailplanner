@@ -1,74 +1,141 @@
-import React from 'react';
-import { Search, X, Flame, GlassWater } from 'lucide-react';
-import { CocktailCategory } from '../types/cocktail';
+import React, { useState } from 'react';
+import { Search, X, Flame, GlassWater, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Language, TRANSLATIONS } from '../i18n/translations';
+import { TasteCategory, StrengthCategory } from '../utils/semiotics';
 
 interface HeroSearchProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  selectedCategory: CocktailCategory;
-  onCategoryChange: (category: CocktailCategory) => void;
+  selectedTaste: TasteCategory;
+  onTasteChange: (taste: TasteCategory) => void;
+  selectedStrength: StrengthCategory;
+  onStrengthChange: (strength: StrengthCategory) => void;
   onQuickSelect: (cocktailId: string) => void;
   popularCocktails: Array<{ id: string; name: string; category: string; colorAccent: string }>;
+  lang: Language;
 }
-
-const CATEGORIES: CocktailCategory[] = [
-  'Tutti',
-  'Aperitivi Italiani',
-  'IBA The Unforgettables',
-  'IBA Contemporary Classics',
-];
 
 export const HeroSearch: React.FC<HeroSearchProps> = ({
   searchQuery,
   onSearchChange,
-  selectedCategory,
-  onCategoryChange,
+  selectedTaste,
+  onTasteChange,
+  selectedStrength,
+  onStrengthChange,
   onQuickSelect,
   popularCocktails,
+  lang,
 }) => {
+  const [showLegend, setShowLegend] = useState(false);
+  const t = TRANSLATIONS[lang];
+
+  const tasteOptions: Array<{ key: TasteCategory; label: string; icon: string }> = [
+    { key: 'all', label: t.filter.all, icon: '✦' },
+    { key: 'bitter', label: t.filter.bitter, icon: '⏹️' },
+    { key: 'sweet-sour', label: t.filter.sweetSour, icon: '🔺' },
+    { key: 'dry', label: t.filter.dry, icon: '⚪' },
+  ];
+
+  const strengthOptions: Array<{ key: StrengthCategory; label: string; colorClass: string }> = [
+    { key: 'all', label: t.filter.allStrength, colorClass: 'bg-white' },
+    { key: 'light', label: t.filter.light, colorClass: 'bg-[#F0C020]' },
+    { key: 'medium', label: t.filter.medium, colorClass: 'bg-[#1040C0] text-white' },
+    { key: 'strong', label: t.filter.strong, colorClass: 'bg-[#D02020] text-white' },
+  ];
+
   return (
     <section className="w-full bg-[#FFFFFF] border-b-4 border-[#121212] relative overflow-hidden">
       {/* Bauhaus Dot background overlay */}
       <div className="absolute inset-0 bauhaus-dots-light pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column: Headlines & Search */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#F0C020] border-2 border-[#121212] shadow-[3px_3px_0px_0px_#121212]">
-              <Flame className="w-4 h-4 text-[#121212]" />
-              <span className="text-xs font-black uppercase tracking-widest text-[#121212]">
-                Form Follows Function • Bauhaus Cocktail Engine
-              </span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+          {/* Left Column: Headlines, Search & Bauhaus Filters */}
+          <div className="lg:col-span-8 space-y-5">
+            {/* Top Tag & Semiotics Guide Toggle */}
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-[#F0C020] border-2 border-[#121212] shadow-[3px_3px_0px_0px_#121212]">
+                <Flame className="w-4 h-4 text-[#121212]" />
+                <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#121212]">
+                  {t.hero.badge}
+                </span>
+              </div>
+
+              {/* Bauhaus Guide Button */}
+              <button
+                type="button"
+                onClick={() => setShowLegend(!showLegend)}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-black uppercase bg-[#F0F0F0] hover:bg-white text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 transition-all"
+              >
+                <HelpCircle className="w-3.5 h-3.5 text-[#1040C0]" />
+                <span>{t.legend.title}</span>
+                {showLegend ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </button>
             </div>
 
-            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tighter text-[#121212] leading-[0.92]">
-              PIANIFICA IL TUO <span className="bg-[#D02020] text-white px-2 py-0.5 inline-block -rotate-1 border-2 border-[#121212] shadow-[4px_4px_0px_0px_#121212]">COCKTAIL</span> PARTY
+            {/* Collapsible Semiotic Legend Box */}
+            {showLegend && (
+              <div className="p-3.5 sm:p-4 bg-[#F0F0F0] border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] space-y-2.5 animate-fadeIn">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  {/* Shapes / Taste */}
+                  <div className="bg-white p-2.5 border-2 border-[#121212]">
+                    <span className="font-black uppercase tracking-wider text-[#121212] block mb-1">
+                      {t.legend.tasteProfiles}
+                    </span>
+                    <ul className="space-y-1 text-[11px] font-medium text-[#121212]/90">
+                      <li>• {t.legend.squareBitter}</li>
+                      <li>• {t.legend.triangleSweetSour}</li>
+                      <li>• {t.legend.circleDry}</li>
+                    </ul>
+                  </div>
+
+                  {/* Colors / Strength */}
+                  <div className="bg-white p-2.5 border-2 border-[#121212]">
+                    <span className="font-black uppercase tracking-wider text-[#121212] block mb-1">
+                      {t.legend.strengths}
+                    </span>
+                    <ul className="space-y-1 text-[11px] font-medium text-[#121212]/90">
+                      <li>• {t.legend.light}</li>
+                      <li>• {t.legend.medium}</li>
+                      <li>• {t.legend.strong}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Main Headline */}
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-[#121212] leading-[0.95]">
+              {t.hero.titleMain}{' '}
+              <span className="bg-[#D02020] text-white px-2 py-0.5 inline-block -rotate-1 border-2 border-[#121212] shadow-[4px_4px_0px_0px_#121212]">
+                {t.hero.titleHighlight}
+              </span>{' '}
+              {t.hero.titleEnd}
             </h2>
 
-            <p className="text-base sm:text-lg font-medium text-[#121212]/90 max-w-2xl leading-relaxed">
-              Scegli il drink, imposta gli invitati e ottieni la lista esatta della spesa in bottiglie reali dei supermercati italiani, gli strumenti DIY di casa e le istruzioni in caraffa.
+            <p className="text-xs sm:text-base font-medium text-[#121212]/90 max-w-2xl leading-relaxed">
+              {t.hero.description}
             </p>
 
             {/* Central Search Bar */}
             <div className="relative max-w-2xl">
-              <div className="flex items-center bg-[#F0F0F0] border-4 border-[#121212] shadow-[6px_6px_0px_0px_#121212] focus-within:shadow-[8px_8px_0px_0px_#D02020] transition-all">
-                <div className="p-3.5 bg-[#F0C020] border-r-4 border-[#121212] flex items-center justify-center">
-                  <Search className="w-6 h-6 text-[#121212]" />
+              <div className="flex items-center bg-[#F0F0F0] border-4 border-[#121212] shadow-[5px_5px_0px_0px_#121212] focus-within:shadow-[7px_7px_0px_0px_#D02020] transition-all">
+                <div className="p-3 sm:p-3.5 bg-[#F0C020] border-r-4 border-[#121212] flex items-center justify-center">
+                  <Search className="w-5 h-5 sm:w-6 sm:h-6 text-[#121212]" />
                 </div>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  placeholder="Cerca per nome, distillato (Gin, Tequila, Campari...) o tipo..."
-                  className="w-full px-4 py-3.5 bg-transparent text-base sm:text-lg font-bold uppercase tracking-wide placeholder:normal-case placeholder:font-medium placeholder:text-[#121212]/50 focus:outline-none"
+                  placeholder={t.hero.searchPlaceholder}
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 bg-transparent text-sm sm:text-base font-bold uppercase tracking-wide placeholder:normal-case placeholder:font-medium placeholder:text-[#121212]/50 focus:outline-none"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => onSearchChange('')}
                     className="p-3 text-[#121212] hover:bg-[#E0E0E0] border-l-2 border-[#121212]"
-                    title="Cancella ricerca"
+                    title="Clear search"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -76,26 +143,54 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
               </div>
             </div>
 
-            {/* Category Filter Pills */}
-            <div className="space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#121212]/70 block">
-                Filtra per Categoria:
+            {/* 1. Filter by Taste Profile (Shapes) */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-black uppercase tracking-wider text-[#121212]/80 flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-[#D02020] inline-block border border-[#121212]" />
+                {t.hero.filterTasteLabel}
               </span>
-              <div className="flex flex-wrap gap-2">
-                {CATEGORIES.map((category) => {
-                  const isActive = selectedCategory === category;
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                {tasteOptions.map((opt) => {
+                  const isActive = selectedTaste === opt.key;
                   return (
                     <button
-                      key={category}
+                      key={opt.key}
                       type="button"
-                      onClick={() => onCategoryChange(category)}
-                      className={`px-3.5 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider border-2 border-[#121212] transition-all duration-150 ${
+                      onClick={() => onTasteChange(opt.key)}
+                      className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 border-[#121212] transition-all duration-100 ${
                         isActive
-                          ? 'bg-[#1040C0] text-white shadow-[4px_4px_0px_0px_#121212] -translate-y-0.5'
+                          ? 'bg-[#1040C0] text-white shadow-[3px_3px_0px_0px_#121212] -translate-y-0.5'
                           : 'bg-[#FFFFFF] text-[#121212] shadow-[2px_2px_0px_0px_#121212] hover:bg-[#F0F0F0]'
                       }`}
                     >
-                      {category}
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 2. Filter by Alcohol Strength (Colors) */}
+            <div className="space-y-1.5 pt-0.5">
+              <span className="text-[11px] font-black uppercase tracking-wider text-[#121212]/80 flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-[#F0C020] inline-block border border-[#121212]" />
+                {t.hero.filterStrengthLabel}
+              </span>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                {strengthOptions.map((opt) => {
+                  const isActive = selectedStrength === opt.key;
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => onStrengthChange(opt.key)}
+                      className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 border-[#121212] transition-all duration-100 ${
+                        isActive
+                          ? `${opt.key === 'all' ? 'bg-[#121212] text-white' : opt.colorClass} shadow-[3px_3px_0px_0px_#121212] -translate-y-0.5`
+                          : 'bg-[#FFFFFF] text-[#121212] shadow-[2px_2px_0px_0px_#121212] hover:bg-[#F0F0F0]'
+                      }`}
+                    >
+                      {opt.label}
                     </button>
                   );
                 })}
@@ -103,16 +198,16 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
             </div>
 
             {/* Popular Suggestion Chips */}
-            <div className="pt-1 flex flex-wrap items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#121212]">
-                ⚡ Suggeriti:
+            <div className="pt-1 flex flex-wrap items-center gap-1.5">
+              <span className="text-[11px] font-black uppercase tracking-wider text-[#121212]">
+                {t.hero.suggestedLabel}
               </span>
               {popularCocktails.map((c) => (
                 <button
                   key={c.id}
                   type="button"
                   onClick={() => onQuickSelect(c.id)}
-                  className="px-2.5 py-1 text-xs font-bold uppercase bg-[#F0F0F0] hover:bg-[#F0C020] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] transition-all duration-150 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                  className="px-2 py-0.5 text-xs font-bold uppercase bg-[#F0F0F0] hover:bg-[#F0C020] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] transition-all duration-100 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 >
                   {c.name}
                 </button>
@@ -120,7 +215,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
             </div>
           </div>
 
-          {/* Right Column: Bauhaus Geometric Poster Graphic */}
+          {/* Right Column: Bauhaus Geometric Graphic Poster (Desktop only) */}
           <div className="hidden lg:block lg:col-span-4">
             <div className="w-full h-80 bg-[#1040C0] border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] relative overflow-hidden flex flex-col justify-between p-6">
               {/* Overlay Dots */}
@@ -128,8 +223,12 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
 
               {/* Bauhaus Graphic Elements */}
               <div className="relative z-10 flex justify-between items-start">
-                <div className="w-16 h-16 rounded-full bg-[#D02020] border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212]" />
-                <div className="w-12 h-12 bg-[#F0C020] border-4 border-[#121212] rotate-45 shadow-[4px_4px_0px_0px_#121212]" />
+                <div className="w-14 h-14 rounded-full bg-[#D02020] border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] flex items-center justify-center text-white font-black text-xs" title="Dry Circle">
+                  DRY
+                </div>
+                <div className="w-12 h-12 bg-[#F0C020] border-4 border-[#121212] rotate-45 shadow-[4px_4px_0px_0px_#121212] flex items-center justify-center text-[#121212] font-black text-xs" title="Bitter Square">
+                  <span className="-rotate-45 font-black text-[10px]">BITTER</span>
+                </div>
               </div>
 
               <div className="relative z-10 my-auto text-center">
@@ -138,17 +237,17 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                 </div>
                 <div className="mt-3">
                   <span className="text-2xl font-black text-white uppercase tracking-tight block">
-                    100% MATEMATICA
+                    {t.hero.mathBadgeTitle}
                   </span>
                   <span className="text-xs font-bold text-[#F0C020] uppercase tracking-widest">
-                    Zero sprechi • Spesa esatta
+                    {t.hero.mathBadgeSub}
                   </span>
                 </div>
               </div>
 
               <div className="relative z-10 flex justify-between items-end border-t-2 border-white/30 pt-3">
-                <span className="text-xs font-bold text-white uppercase">Vite + React + TS</span>
-                <span className="text-xs font-bold text-[#F0C020] uppercase">IBA Standards</span>
+                <span className="text-xs font-bold text-white uppercase">Vite + React 19</span>
+                <span className="text-xs font-bold text-[#F0C020] uppercase">Bauhaus Semiotics</span>
               </div>
             </div>
           </div>

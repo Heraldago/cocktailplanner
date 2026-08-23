@@ -1,13 +1,15 @@
 import React from 'react';
 import { Cocktail } from '../types/cocktail';
 import { Wine, Check } from 'lucide-react';
-import { BauhausCornerBadge } from './BauhausDecorations';
+import { getCocktailSemiotics } from '../utils/semiotics';
+import { Language, TRANSLATIONS } from '../i18n/translations';
 
 interface CocktailGridProps {
   cocktails: Cocktail[];
   selectedCocktailId: string;
   onSelectCocktail: (cocktail: Cocktail) => void;
   onResetSearch: () => void;
+  lang: Language;
 }
 
 export const CocktailGrid: React.FC<CocktailGridProps> = ({
@@ -15,7 +17,10 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
   selectedCocktailId,
   onSelectCocktail,
   onResetSearch,
+  lang,
 }) => {
+  const t = TRANSLATIONS[lang].cocktailGrid;
+
   if (cocktails.length === 0) {
     return (
       <div className="w-full bg-white border-4 border-[#121212] p-8 text-center shadow-[6px_6px_0px_0px_#121212] my-6">
@@ -23,17 +28,17 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
           <Wine className="w-8 h-8 text-[#121212]" />
         </div>
         <h3 className="text-2xl font-black uppercase tracking-tight text-[#121212]">
-          Nessun cocktail trovato
+          {t.notFoundTitle}
         </h3>
         <p className="text-sm font-medium text-[#121212]/80 mt-1 max-w-md mx-auto">
-          Prova a cercare con un altro nome, un distillato (Gin, Tequila, Rum, Bourbon) o reimposta i filtri.
+          {t.notFoundDesc}
         </p>
         <button
           type="button"
           onClick={onResetSearch}
           className="mt-4 px-6 py-2.5 bg-[#D02020] text-white font-bold uppercase tracking-wider border-2 border-[#121212] shadow-[4px_4px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
         >
-          Mostra tutti i cocktail
+          {t.showAllBtn}
         </button>
       </div>
     );
@@ -42,47 +47,55 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-[#121212] flex items-center gap-2">
+        <h3 className="text-base sm:text-xl font-black uppercase tracking-tight text-[#121212] flex items-center gap-2">
           <span className="w-3 h-3 bg-[#D02020] rounded-full border-2 border-[#121212]" />
-          1. Seleziona il Cocktail ({cocktails.length} disponibili)
+          {t.stepTitle(cocktails.length)}
         </h3>
-        <span className="text-xs font-bold text-[#121212]/70 uppercase">
-          Clicca per pianificare
+        <span className="text-[11px] sm:text-xs font-bold text-[#121212]/70 uppercase">
+          {t.clickToPlan}
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {cocktails.map((cocktail, index) => {
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
+        {cocktails.map((cocktail) => {
           const isSelected = cocktail.id === selectedCocktailId;
-          const cornerShape = index % 3 === 0 ? 'circle' : index % 3 === 1 ? 'square' : 'triangle';
-          const cornerColor = cocktail.colorAccent;
+          const semiotics = getCocktailSemiotics(cocktail);
+          const tasteLabel = lang === 'it' ? semiotics.tasteLabelIt : semiotics.tasteLabelEn;
+          const strengthLabel = lang === 'it' ? semiotics.strengthLabelIt : semiotics.strengthLabelEn;
 
           return (
             <div
               key={cocktail.id}
               onClick={() => onSelectCocktail(cocktail)}
-              className={`cursor-pointer transition-all duration-150 p-4 border-4 border-[#121212] flex flex-col justify-between relative text-left ${
+              className={`cursor-pointer transition-all duration-150 p-4 border-4 border-[#121212] flex flex-col justify-between relative text-left select-none active:scale-[0.99] ${
                 isSelected
-                  ? 'bg-[#F0C020] shadow-[6px_6px_0px_0px_#121212] -translate-y-1'
+                  ? 'bg-[#F0C020] shadow-[6px_6px_0px_0px_#121212] -translate-y-0.5'
                   : 'bg-white shadow-[4px_4px_0px_0px_#121212] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#121212]'
               }`}
             >
-              {/* Corner Badge */}
+              {/* Corner Badge: Semiotic Shape + Color OR Selection State */}
               <div className="absolute top-3 right-3 flex items-center gap-1.5">
                 {isSelected ? (
-                  <span className="flex items-center gap-1 px-2 py-0.5 bg-[#D02020] text-white text-[10px] font-black uppercase border-2 border-[#121212]">
-                    <Check className="w-3 h-3" /> SELEZIONATO
+                  <span className="flex items-center gap-1 px-2 py-0.5 bg-[#D02020] text-white text-[10px] font-black uppercase border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212]">
+                    <Check className="w-3 h-3" /> {t.selectedBadge}
                   </span>
                 ) : (
-                  <BauhausCornerBadge variant={cornerShape} color={cornerColor} />
+                  <div
+                    className="flex items-center gap-1 px-1.5 py-0.5 border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] text-xs font-black"
+                    style={{ backgroundColor: semiotics.colorHex, color: semiotics.color === 'yellow' ? '#121212' : '#FFFFFF' }}
+                    title={`${tasteLabel} • ${strengthLabel}`}
+                  >
+                    <span>{semiotics.shapeEmoji}</span>
+                    <span className="text-[9px] uppercase tracking-wider">{cocktail.abv}%</span>
+                  </div>
                 )}
               </div>
 
               <div>
-                {/* Category tag */}
-                <div className="mb-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-[#F0F0F0] border-2 border-[#121212] text-[#121212] inline-block">
-                    {cocktail.category}
+                {/* Taste & Category badges */}
+                <div className="mb-2 flex items-center gap-1.5 flex-wrap pr-16">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-[#F0F0F0] border border-[#121212] text-[#121212] inline-block">
+                    {tasteLabel}
                   </span>
                 </div>
 
@@ -95,10 +108,10 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
                   {cocktail.tagline}
                 </p>
 
-                {/* Ingredients list preview */}
+                {/* Ingredients preview pills */}
                 <div className="mt-3 pt-2 border-t-2 border-[#121212]/20">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#121212]/70 block mb-1">
-                    Ingredienti:
+                    {t.ingredientsLabel}
                   </span>
                   <div className="flex flex-wrap gap-1">
                     {cocktail.ingredients.map((ing) => (
@@ -115,11 +128,17 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
 
               {/* Bottom Meta bar */}
               <div className="mt-4 pt-2.5 border-t-2 border-[#121212] flex items-center justify-between text-xs font-bold">
-                <span className="text-[11px] uppercase text-[#121212]/80">
+                <span className="text-[11px] uppercase text-[#121212]/80 truncate max-w-[150px]">
                   {cocktail.glass.split(' (')[0]}
                 </span>
-                <span className="px-1.5 py-0.5 bg-[#121212] text-white text-[10px] uppercase">
-                  ~{cocktail.abv}% ABV
+                <span
+                  className="px-1.5 py-0.5 text-[10px] uppercase font-black border border-[#121212]"
+                  style={{
+                    backgroundColor: semiotics.colorHex,
+                    color: semiotics.color === 'yellow' ? '#121212' : '#FFFFFF',
+                  }}
+                >
+                  {semiotics.strength === 'light' ? 'Light' : semiotics.strength === 'medium' ? 'Medium' : 'Strong'} • {cocktail.abv}%
                 </span>
               </div>
             </div>
