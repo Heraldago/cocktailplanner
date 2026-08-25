@@ -34,28 +34,27 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-lg sm:text-2xl font-black uppercase tracking-tight text-[#121212] leading-none">
+              <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase tracking-tight text-[#121212] leading-none">
                   {t.title}
                 </h1>
 
-                {/* Author Badge: "fatto da" + author logo */}
-                <div className="flex items-center gap-1.5 px-2 py-0.5 bg-[#F0F0F0] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212]" title="Created by HN">
-                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#121212]">
+                {/* Prominent Author Badge: "fatto da" + Large Logo */}
+                <div 
+                  className="flex items-center gap-2 px-2.5 py-1 bg-[#F0F0F0] hover:bg-white border-2 border-[#121212] shadow-[3px_3px_0px_0px_#121212] transition-all select-none"
+                  title="Created by HN"
+                >
+                  <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#121212]">
                     {t.madeBy}
                   </span>
                   <img
                     src="/author-logo.png"
                     alt="HN Logo"
-                    className="w-5 h-5 sm:w-5 sm:h-5 rounded-full border border-[#121212] shadow-sm inline-block object-cover"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-[#121212] shadow-[1.5px_1.5px_0px_0px_#121212] object-cover"
                   />
                 </div>
-
-                <span className="hidden lg:inline-block px-1.5 py-0.5 text-[10px] font-black uppercase bg-[#F0C020] border border-[#121212]">
-                  {t.edition}
-                </span>
               </div>
-              <p className="text-[11px] sm:text-xs font-medium text-[#121212]/80 mt-0.5 hidden xs:block">
+              <p className="text-[11px] sm:text-xs font-medium text-[#121212]/80 mt-1 hidden xs:block">
                 {t.subtitle(totalCocktailsCount)}
               </p>
             </div>
