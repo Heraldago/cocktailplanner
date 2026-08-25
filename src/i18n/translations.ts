@@ -51,6 +51,9 @@ export interface Translations {
     notFoundTitle: string;
     notFoundDesc: string;
     showAllBtn: string;
+    viewAllBtn: (total: number) => string;
+    showLessBtn: string;
+    showingLabel: (shown: number, total: number) => string;
   };
   configurator: {
     stepTitle: string;
@@ -190,6 +193,9 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       notFoundTitle: 'Nessun cocktail trovato',
       notFoundDesc: 'Prova a cercare con un altro nome, un distillato (Gin, Tequila, Rum, Bourbon) o reimposta i filtri.',
       showAllBtn: 'Mostra tutti i cocktail',
+      viewAllBtn: (total) => `Vedi Tutti i Cocktail (${total})`,
+      showLessBtn: 'Mostra Meno (I 6 Consigliati)',
+      showingLabel: (shown, total) => `Stai visualizzando ${shown} di ${total} cocktail`,
     },
     configurator: {
       stepTitle: '2. Configura il Party',
@@ -327,6 +333,9 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       notFoundTitle: 'No cocktails found',
       notFoundDesc: 'Try searching with another name, spirit (Gin, Tequila, Rum, Bourbon) or reset the filters.',
       showAllBtn: 'Show all cocktails',
+      viewAllBtn: (total) => `View All Cocktails (${total})`,
+      showLessBtn: 'Show Less (Top 6 Recommended)',
+      showingLabel: (shown, total) => `Showing ${shown} of ${total} cocktails`,
     },
     configurator: {
       stepTitle: '2. Party Configuration',

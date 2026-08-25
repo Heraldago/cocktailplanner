@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Cocktail } from '../types/cocktail';
-import { Wine, Check } from 'lucide-react';
+import { Wine, Check, ChevronDown, ChevronUp, Layers } from 'lucide-react';
 import { getCocktailSemiotics } from '../utils/semiotics';
 import { Language, TRANSLATIONS } from '../i18n/translations';
 import { BauhausShape } from './BauhausShape';
@@ -13,6 +13,8 @@ interface CocktailGridProps {
   lang: Language;
 }
 
+const INITIAL_VISIBLE_COUNT = 6;
+
 export const CocktailGrid: React.FC<CocktailGridProps> = ({
   cocktails,
   selectedCocktailId,
@@ -20,6 +22,7 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
   onResetSearch,
   lang,
 }) => {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const t = TRANSLATIONS[lang].cocktailGrid;
 
   if (cocktails.length === 0) {
@@ -45,20 +48,43 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
     );
   }
 
+  // Slice to 6 if not expanded
+  const displayedCocktails = isExpanded ? cocktails : cocktails.slice(0, INITIAL_VISIBLE_COUNT);
+  const hasMoreCocktails = cocktails.length > INITIAL_VISIBLE_COUNT;
+
+  const handleToggleExpand = () => {
+    setIsExpanded((prev) => !prev);
+    // If collapsing, smooth scroll back to top of the grid
+    if (isExpanded) {
+      const element = document.getElementById('cocktail-selection');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4" id="cocktail-selection">
+      {/* Grid Header & Counter */}
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-base sm:text-xl font-black uppercase tracking-tight text-[#121212] flex items-center gap-2">
           <span className="w-3 h-3 bg-[#D02020] rounded-full border-2 border-[#121212]" />
           {t.stepTitle(cocktails.length)}
         </h3>
-        <span className="text-[11px] sm:text-xs font-bold text-[#121212]/70 uppercase">
-          {t.clickToPlan}
-        </span>
+
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] sm:text-xs font-bold text-[#121212]/70 uppercase">
+            {t.showingLabel(displayedCocktails.length, cocktails.length)}
+          </span>
+          <span className="hidden sm:inline-block px-2 py-0.5 bg-[#F0F0F0] border border-[#121212] text-[10px] font-black uppercase">
+            {t.clickToPlan}
+          </span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
-        {cocktails.map((cocktail) => {
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+        {displayedCocktails.map((cocktail) => {
           const isSelected = cocktail.id === selectedCocktailId;
           const semiotics = getCocktailSemiotics(cocktail);
           const tasteLabel = lang === 'it' ? semiotics.tasteLabelIt : semiotics.tasteLabelEn;
@@ -68,7 +94,7 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
             <div
               key={cocktail.id}
               onClick={() => onSelectCocktail(cocktail)}
-              className={`cursor-pointer transition-all duration-150 p-4 border-4 border-[#121212] flex flex-col justify-between relative text-left select-none active:scale-[0.99] ${
+              className={`cursor-pointer transition-all duration-150 p-4 sm:p-5 border-4 border-[#121212] flex flex-col justify-between relative text-left select-none active:scale-[0.99] ${
                 isSelected
                   ? 'bg-[#F0C020] shadow-[6px_6px_0px_0px_#121212] -translate-y-0.5'
                   : 'bg-white shadow-[4px_4px_0px_0px_#121212] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#121212]'
@@ -99,17 +125,17 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
                 </div>
 
                 {/* Cocktail Name */}
-                <h4 className="text-xl font-black uppercase tracking-tight text-[#121212] leading-tight">
+                <h4 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#121212] leading-tight">
                   {cocktail.name}
                 </h4>
 
-                <p className="text-xs font-medium text-[#121212]/80 mt-1 line-clamp-2 leading-snug">
+                <p className="text-xs sm:text-sm font-medium text-[#121212]/80 mt-1 line-clamp-2 leading-snug">
                   {cocktail.tagline}
                 </p>
 
                 {/* Ingredients preview pills */}
-                <div className="mt-3 pt-2 border-t-2 border-[#121212]/20">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#121212]/70 block mb-1">
+                <div className="mt-3.5 pt-2.5 border-t-2 border-[#121212]/20">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#121212]/70 block mb-1.5">
                     {t.ingredientsLabel}
                   </span>
                   <div className="flex flex-wrap gap-1">
@@ -138,6 +164,39 @@ export const CocktailGrid: React.FC<CocktailGridProps> = ({
           );
         })}
       </div>
+
+      {/* ========================================================================= */}
+      {/* ⭐ BIG BAUHAUS "VEDI TUTTI I COCKTAIL" / "MOSTRA MENO" BUTTON */}
+      {/* ========================================================================= */}
+      {hasMoreCocktails && (
+        <div className="pt-4 pb-2 flex flex-col items-center justify-center space-y-2">
+          <button
+            type="button"
+            onClick={handleToggleExpand}
+            className="w-full sm:w-auto min-w-[300px] sm:min-w-[360px] px-6 py-3.5 sm:py-4 bg-[#1040C0] hover:bg-[#1040C0]/90 text-white font-black uppercase tracking-wider text-sm sm:text-base border-4 border-[#121212] shadow-[6px_6px_0px_0px_#121212] hover:shadow-[8px_8px_0px_0px_#D02020] active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0px_0px_#121212] transition-all flex items-center justify-center gap-3 cursor-pointer select-none"
+          >
+            <Layers className="w-5 h-5 text-[#F0C020]" />
+            <span>
+              {isExpanded ? t.showLessBtn : t.viewAllBtn(cocktails.length)}
+            </span>
+            {isExpanded ? (
+              <ChevronUp className="w-5 h-5 text-[#F0C020]" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-[#F0C020] animate-bounce" />
+            )}
+          </button>
+
+          <p className="text-[11px] font-bold text-[#121212]/60 uppercase tracking-wider">
+            {isExpanded
+              ? lang === 'it'
+                ? `Mostrando l'intera collezione di ${cocktails.length} ricette ufficiali`
+                : `Showing the entire collection of ${cocktails.length} official recipes`
+              : lang === 'it'
+              ? `Clicca per scoprire tutti gli altri ${cocktails.length - INITIAL_VISIBLE_COUNT} cocktail`
+              : `Click to reveal all other ${cocktails.length - INITIAL_VISIBLE_COUNT} cocktails`}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
