@@ -67,7 +67,7 @@ export interface Cocktail {
   id: string;
   name: string;
   tagline: string;
-  category: 'Aperitivi Italiani' | 'IBA The Unforgettables' | 'IBA Contemporary Classics' | 'IBA New Era Drinks';
+  category: string;
   glass: string;
   technique: string;
   iceKgPerDrink: number;

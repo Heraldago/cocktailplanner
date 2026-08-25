@@ -1,241 +1,53 @@
 import { Cocktail, EquipmentItem, Ingredient, Instructions } from '../types/cocktail';
 import { Language } from '../i18n/translations';
+import { COCKTAIL_METAS, getLocalizedCategory, getLocalizedFlavorProfile } from '../i18n/cocktailDescriptions';
+import { lookupIngredientTranslation } from '../i18n/ingredientTranslations';
 
-// 1. Comprehensive Ingredient Name Dictionary across 6 languages
-const INGREDIENT_TRANSLATIONS: Record<string, Record<Language, string>> = {
-  'prosecco doc extra dry': {
-    en: 'Prosecco DOC Extra Dry',
-    it: 'Prosecco DOC Extra Dry',
-    es: 'Prosecco DOC Extra Dry',
-    fr: 'Prosecco DOC Extra Dry',
-    pt: 'Prosecco DOC Extra Dry',
-    de: 'Prosecco DOC Extra Dry',
-  },
-  'aperol': {
-    en: 'Aperol Aperitivo',
-    it: 'Aperol',
-    es: 'Aperol Aperitivo',
-    fr: 'Aperol',
-    pt: 'Aperol',
-    de: 'Aperol',
-  },
-  'campari bitter': {
-    en: 'Campari Bitter',
-    it: 'Campari Bitter',
-    es: 'Campari Bitter',
-    fr: 'Campari Bitter',
-    pt: 'Campari Bitter',
-    de: 'Campari Bitter',
-  },
-  'gin tanqueray / london dry': {
-    en: 'London Dry Gin (Tanqueray / Beefeater)',
-    it: 'Gin London Dry (Tanqueray / Beefeater)',
-    es: 'Ginebra London Dry (Tanqueray / Beefeater)',
-    fr: 'Gin London Dry (Tanqueray / Beefeater)',
-    pt: 'Gin London Dry (Tanqueray / Beefeater)',
-    de: 'London Dry Gin (Tanqueray / Beefeater)',
-  },
-  'vermouth rosso dolce (torino)': {
-    en: 'Sweet Red Vermouth (Martini Rosso / Carpano)',
-    it: 'Vermouth Rosso Dolce (Martini / Carpano)',
-    es: 'Vermut Rojo Dulce (Martini / Carpano)',
-    fr: 'Vermouth Rouge Doux (Martini / Carpano)',
-    pt: 'Vermute Tinto Doce (Martini / Carpano)',
-    de: 'Roter Wermut (Martini Rosso / Carpano)',
-  },
-  'vermouth dry (secco)': {
-    en: 'Dry Vermouth (Martini Extra Dry / Noilly Prat)',
-    it: 'Vermouth Dry Secco (Martini / Noilly Prat)',
-    es: 'Vermut Seco Dry (Martini / Noilly Prat)',
-    fr: 'Vermouth Sec Dry (Noilly Prat / Dolin)',
-    pt: 'Vermute Seco Dry (Martini / Noilly Prat)',
-    de: 'Trockener Wermut (Noilly Prat / Martini Dry)',
-  },
-  'vodka premium': {
-    en: 'Vodka (Smirnoff / Absolut / Ketel One)',
-    it: 'Vodka (Smirnoff / Absolut / Ketel One)',
-    es: 'Vodka (Smirnoff / Absolut / Ketel One)',
-    fr: 'Vodka (Absolut / Grey Goose / Smirnoff)',
-    pt: 'Vodka (Smirnoff / Absolut / Ketel One)',
-    de: 'Vodka (Smirnoff / Absolut / Ketel One)',
-  },
-  'tequila blanco 100% agave': {
-    en: '100% Agave Blanco Tequila (Espolòn / Jose Cuervo)',
-    it: 'Tequila Blanco 100% Agave (Espolòn / Cuervo)',
-    es: 'Tequila Blanco 100% Agave (Espolòn / Cuervo)',
-    fr: 'Tequila Blanco 100% Agave (Espolòn / Calle 23)',
-    pt: 'Tequila Blanco 100% Agave (Espolòn / Cuervo)',
-    de: '100% Agave Blanco Tequila (Espolòn / Cuervo)',
-  },
-  'triple sec / cointreau': {
-    en: 'Triple Sec / Cointreau Orange Liqueur',
-    it: 'Triple Sec / Cointreau Liquore all\'Arancia',
-    es: 'Triple Sec / Cointreau Licor de Naranja',
-    fr: 'Triple Sec / Cointreau Liqueur d\'Orange',
-    pt: 'Triple Sec / Cointreau Licor de Laranja',
-    de: 'Triple Sec / Cointreau Orangenlikör',
-  },
-  'rum bianco cubano': {
-    en: 'White Rum (Havana Club 3 / Bacardí Carta Blanca)',
-    it: 'Rum Bianco (Havana Club 3 / Bacardi)',
-    es: 'Ron Blanco (Havana Club 3 / Bacardí Carta Blanca)',
-    fr: 'Rhum Blanc (Havana Club 3 / Bacardi)',
-    pt: 'Rum Branco (Havana Club 3 / Bacardi)',
-    de: 'Weißer Rum (Havana Club 3 / Bacardí)',
-  },
-  'dark rum / rum scuro': {
-    en: 'Aged Dark Rum (Appleton / Diplomatico / Havana 7)',
-    it: 'Rum Scuro Invecchiato (Havana 7 / Diplomatico)',
-    es: 'Ron Oscuro Añejo (Havana 7 / Diplomatico)',
-    fr: 'Rhum Vieux Ambré (Havana 7 / Diplomatico)',
-    pt: 'Rum Escuro Envelhecido (Havana 7 / Diplomatico)',
-    de: 'Dunkler gereifter Rum (Havana 7 / Diplomatico)',
-  },
-  'bourbon whiskey americano': {
-    en: 'Kentucky Straight Bourbon Whiskey (Bulleit / Maker\'s Mark)',
-    it: 'Bourbon Whiskey Americano (Bulleit / Maker\'s Mark)',
-    es: 'Bourbon Whiskey Americano (Bulleit / Maker\'s Mark)',
-    fr: 'Whiskey Bourbon Américain (Bulleit / Maker\'s Mark)',
-    pt: 'Bourbon Whiskey Americano (Bulleit / Maker\'s Mark)',
-    de: 'Bourbon Whiskey (Bulleit / Maker\'s Mark / Jim Beam)',
-  },
-  'succo di lime fresco': {
-    en: 'Freshly Squeezed Lime Juice',
-    it: 'Succo di lime fresco filtrato',
-    es: 'Zumo de lima recién exprimido',
-    fr: 'Jus de citron vert frais pressé',
-    pt: 'Suco de limão taiti fresco',
-    de: 'Frisch gepresster Limettensaft',
-  },
-  'succo di limone fresco': {
-    en: 'Freshly Squeezed Lemon Juice',
-    it: 'Succo di limone fresco filtrato',
-    es: 'Zumo de limón recién exprimido',
-    fr: 'Jus de citron jaune frais pressé',
-    pt: 'Suco de limão siciliano fresco',
-    de: 'Frisch gepresster Zitronensaft',
-  },
-  'sciroppo di zucchero 1:1': {
-    en: 'Simple Sugar Syrup (1:1 Ratio)',
-    it: 'Sciroppo di zucchero semplice (1:1)',
-    es: 'Jarabe de azúcar simple (1:1)',
-    fr: 'Sirop de sucre de canne simple (1:1)',
-    pt: 'Xarope simples de açúcar (1:1)',
-    de: 'Einfacher Zuckersirup (1:1)',
-  },
-  'foglie di menta fresca': {
-    en: 'Fresh Mint Sprigs / Leaves',
-    it: 'Foglioline di menta fresca',
-    es: 'Hojas de menta / hierbabuena fresca',
-    fr: 'Feuilles de menthe fraîche',
-    pt: 'Folhas de hortelã fresca',
-    de: 'Frische Minzblätter',
-  },
-  'soda / acqua gassata': {
-    en: 'Club Soda / Sparkling Water',
-    it: 'Soda / Acqua gassata molto frizzante',
-    es: 'Soda / Agua con gas muy fría',
-    fr: 'Eau gazeuse très pétillante / Soda',
-    pt: 'Club Soda / Água com gás bem gelada',
-    de: 'Sodawasser / stark sprudelndes Mineralwasser',
-  },
-  'acqua tonica': {
-    en: 'Crisp Indian Tonic Water',
-    it: 'Acqua Tonica frizzante premium',
-    es: 'Tónica Premium bien fría',
-    fr: 'Eau Tonique pétillante (Tonic Water)',
-    pt: 'Água Tônica de qualidade',
-    de: 'Premium Tonic Water',
-  },
-  'caffe espresso': {
-    en: 'Fresh Hot Espresso Coffee',
-    it: 'Caffè espresso appena estratto',
-    es: 'Café espresso caliente recién hecho',
-    fr: 'Café expresso chaud fraîchement préparé',
-    pt: 'Café espresso quente fresco',
-    de: 'Frisch gebrühter heißer Espresso',
-  },
-  'liquore al caffe': {
-    en: 'Coffee Liqueur (Kahlúa / Mr Black / Borghetti)',
-    it: 'Liquore al Caffè (Kahlúa / Borghetti)',
-    es: 'Licor de Café (Kahlúa / Borghetti)',
-    fr: 'Liqueur de Café (Kahlúa / Borghetti)',
-    pt: 'Licor de Café (Kahlúa / Borghetti)',
-    de: 'Kaffeelikör (Kahlúa / Tia Maria)',
-  },
-  'angostura': {
-    en: 'Angostura Aromatic Bitters',
-    it: 'Angostura Aromatic Bitters',
-    es: 'Amargo de Angostura',
-    fr: 'Angostura Bitters',
-    pt: 'Angostura Bitters',
-    de: 'Angostura Bitters',
-  },
-  'fetta di arancia': {
-    en: 'Fresh Orange Slice or Wedge',
-    it: 'Fetta o spicchio di arancia fresca',
-    es: 'Rodaja o gajo de naranja fresca',
-    fr: 'Tranche ou quartier d\'orange fraîche',
-    pt: 'Fatia ou rodela de laranja fresca',
-    de: 'Frische Orangenscheibe oder Spalte',
-  },
-  'fetta di lime': {
-    en: 'Fresh Lime Wheel or Wedge',
-    it: 'Fetta o spicchio di lime fresco',
-    es: 'Rodaja o gajo de lima fresca',
-    fr: 'Rondelle ou quartier de citron vert frais',
-    pt: 'Rodela ou gomo de limão taiti',
-    de: 'Frische Limettenscheibe oder Spalte',
-  },
-  'oliva verde': {
-    en: 'Green Cocktail Olive (Castelvetrano)',
-    it: 'Oliva verde da cocktail',
-    es: 'Aceituna verde de cóctel',
-    fr: 'Olive verte à cocktail',
-    pt: 'Azeitona verde de coquetel',
-    de: 'Grüne Cocktail-Olive',
-  },
-};
-
+// 1. Localized Ingredient Name & Brand Notes
 export function getLocalizedIngredientName(name: string, lang: Language): string {
-  if (lang === 'it') return name;
+  return lookupIngredientTranslation(name, lang);
+}
 
-  const lower = name.toLowerCase();
+function getLocalizedBrandNotes(notes: string, lang: Language): string {
+  if (lang === 'it') return notes;
 
-  for (const [key, trans] of Object.entries(INGREDIENT_TRANSLATIONS)) {
-    if (lower.includes(key)) {
-      return trans[lang] || trans.en;
-    }
+  const lower = notes.toLowerCase();
+  if (lower.includes('ben freddo') || lower.includes('frigorifero')) {
+    if (lang === 'en') return 'Serve well chilled straight from the refrigerator';
+    if (lang === 'es') return 'Servir muy frío directamente del frigorífico';
+    if (lang === 'fr') return 'Servir très frais directement du réfrigérateur';
+    if (lang === 'pt') return 'Servir bem gelado direto da geladeira';
+    if (lang === 'de') return 'Gut gekühlt direkt aus dem Kühlschrank servieren';
+  }
+  if (lower.includes('bitter arancione') || lower.includes('11%')) {
+    if (lang === 'en') return 'The quintessential Italian orange aperitif (11% ABV)';
+    if (lang === 'es') return 'El aperitivo amargo de naranja italiano por excelencia (11% ABV)';
+    if (lang === 'fr') return 'L\'apéritif amer à l\'orange emblématique d\'Italie (11% ABV)';
+    if (lang === 'pt') return 'O aperitivo amargo de laranja clássico da Itália (11% ABV)';
+    if (lang === 'de') return 'Der klassische italienische Orangen-Aperitif (11% Vol.)';
+  }
+  if (lower.includes('perlage') || lower.includes('allungare')) {
+    if (lang === 'en') return 'Adds crisp effervescence and lively bubbles';
+    if (lang === 'es') return 'Aporta una burbuja fina y refrescante';
+    if (lang === 'fr') return 'Apporte des bulles vives et une fraîcheur éclatante';
+    if (lang === 'pt') return 'Adiciona bolhas vivas e frescor';
+    if (lang === 'de') return 'Sorgt für feine Kohlensäure und lebendiges Perlen';
+  }
+  if (lower.includes('freschissim') || lower.includes('spremut')) {
+    if (lang === 'en') return 'Use fresh citrus squeezed right before preparation';
+    if (lang === 'es') return 'Usar cítricos frescos recién exprimidos';
+    if (lang === 'fr') return 'Utiliser des agrumes frais pressés à la minute';
+    if (lang === 'pt') return 'Usar frutas frescas espremidas na hora';
+    if (lang === 'de') return 'Frisch gepresster Zitrussaft für optimales Aroma';
   }
 
-  // Fallbacks for general categories
-  if (lower.includes('prosecco') || lower.includes('spumante')) {
-    return lang === 'en' ? 'Prosecco DOC Sparkling Wine' : lang === 'es' ? 'Vino Espumoso Prosecco DOC' : lang === 'fr' ? 'Vin Effervescent Prosecco DOC' : lang === 'pt' ? 'Espumante Prosecco DOC' : lang === 'de' ? 'Prosecco DOC Schaumwein' : name;
-  }
-  if (lower.includes('lime')) {
-    return lang === 'en' ? 'Fresh Lime' : lang === 'es' ? 'Lima Fresca' : lang === 'fr' ? 'Citron Vert Frais' : lang === 'pt' ? 'Limão Taiti Fresco' : lang === 'de' ? 'Frische Limette' : name;
-  }
-  if (lower.includes('limone')) {
-    return lang === 'en' ? 'Fresh Lemon' : lang === 'es' ? 'Limón Fresco' : lang === 'fr' ? 'Citron Jaune Frais' : lang === 'pt' ? 'Limão Siciliano' : lang === 'de' ? 'Frische Zitrone' : name;
-  }
-  if (lower.includes('menta')) {
-    return lang === 'en' ? 'Fresh Mint Leaves' : lang === 'es' ? 'Hojas de Menta' : lang === 'fr' ? 'Menthe Fraîche' : lang === 'pt' ? 'Hortelã Fresca' : lang === 'de' ? 'Frische Minze' : name;
-  }
-  if (lower.includes('zucchero')) {
-    return lang === 'en' ? 'Sugar Syrup / Sugar' : lang === 'es' ? 'Jarabe de Azúcar' : lang === 'fr' ? 'Sirop de Sucre' : lang === 'pt' ? 'Açúcar / Xarope' : lang === 'de' ? 'Zucker / Sirup' : name;
-  }
-  if (lower.includes('soda') || lower.includes('seltz')) {
-    return lang === 'en' ? 'Club Soda / Seltzer' : lang === 'es' ? 'Agua con Gas / Soda' : lang === 'fr' ? 'Eau Gazeuse / Soda' : lang === 'pt' ? 'Club Soda' : lang === 'de' ? 'Sodawasser' : name;
-  }
-  if (lower.includes('tonica')) {
-    return lang === 'en' ? 'Tonic Water' : lang === 'es' ? 'Agua Tónica' : lang === 'fr' ? 'Tonic' : lang === 'pt' ? 'Água Tônica' : lang === 'de' ? 'Tonic Water' : name;
-  }
-
-  return name;
+  return notes;
 }
 
 // 2. Localized Glassware mapping
 export function getLocalizedGlass(glassName: string, lang: Language): string {
+  if (lang === 'it') return glassName;
+
   const lower = glassName.toLowerCase();
   
   if (lower.includes('tumbler basso') || lower.includes('old fashioned') || lower.includes('rocks') || lower.includes('lowball')) {
@@ -262,7 +74,7 @@ export function getLocalizedGlass(glassName: string, lang: Language): string {
     return map[lang] || map.en;
   }
 
-  if (lower.includes('calice') || lower.includes('spritz') || lower.includes('wine')) {
+  if (lower.includes('calice') || lower.includes('spritz') || lower.includes('vino') || lower.includes('wine')) {
     const map: Record<Language, string> = {
       en: 'Large Wine Glass / Spritz Goblet',
       it: 'Calice da Vino / Calice Spritz',
@@ -327,6 +139,8 @@ export function getLocalizedGlass(glassName: string, lang: Language): string {
 
 // 3. Localized Bar Techniques
 export function getLocalizedTechnique(technique: string, lang: Language): string {
+  if (lang === 'it') return technique;
+
   const lower = technique.toLowerCase();
 
   if (lower.includes('build') || lower.includes('direttamente')) {
@@ -394,6 +208,8 @@ export function getLocalizedTechnique(technique: string, lang: Language): string
 
 // 4. Localized Equipment & DIY Hacks
 export function getLocalizedEquipment(equipmentList: EquipmentItem[], lang: Language): EquipmentItem[] {
+  if (lang === 'it') return equipmentList;
+
   return equipmentList.map((eq) => {
     const lowerTool = eq.tool.toLowerCase();
 
@@ -552,68 +368,35 @@ export function getLocalizedEquipment(equipmentList: EquipmentItem[], lang: Lang
   });
 }
 
-// 5. Localized Dynamic Taglines
+// 5. Localized Dynamic Taglines & Descriptions
 export function getLocalizedTagline(cocktail: Cocktail, lang: Language): string {
   if (lang === 'it') return cocktail.tagline;
 
-  const name = cocktail.name.toLowerCase();
-
-  const taglinesMap: Record<string, Record<Language, string>> = {
-    negroni: {
-      en: 'The definitive Italian aperitif with Gin, Campari Bitter and Sweet Red Vermouth.',
-      it: 'L\'icona dell\'aperitivo italiano con Gin, Campari Bitter e Vermouth Rosso.',
-      es: 'El icono del aperitivo italiano con Ginebra, Campari Bitter y Vermut Rojo.',
-      fr: 'L\'icône de l\'apéritif italien au Gin, Campari Bitter et Vermouth Rouge.',
-      pt: 'O ícone do aperitivo italiano com Gin, Campari Bitter e Vermute Tinto.',
-      de: 'Die Ikone des italienischen Aperitifs mit Gin, Campari Bitter und rotem Wermut.',
-    },
-    'aperol-spritz': {
-      en: 'The undisputed king of daytime aperitifs with Prosecco DOC, Aperol and Soda.',
-      it: 'Il re indiscusso dell\'aperitivo italiano con Prosecco DOC, Aperol e Soda.',
-      es: 'El rey indiscutible del aperitivo italiano con Prosecco DOC, Aperol y Soda.',
-      fr: 'Le roi incontesté de l\'apéritif italien au Prosecco DOC, Aperol et Soda.',
-      pt: 'O rei indiscutível do aperitivo italiano com Prosecco DOC, Aperol e Club Soda.',
-      de: 'Der unangefochtene König des Aperitifs mit Prosecco DOC, Aperol und Soda.',
-    },
-    margarita: {
-      en: 'The Mexican fiesta icon: Blanco Tequila, Cointreau/Triple Sec and fresh lime juice.',
-      it: 'Il classico messicano con Tequila Blanco, Triple Sec e succo di lime fresco.',
-      es: 'El clásico mexicano con Tequila Blanco, Triple Sec y zumo de lima recién exprimido.',
-      fr: 'Le grand classique mexicain à la Tequila Blanco, Triple Sec et jus de citron vert.',
-      pt: 'O clássico mexicano com Tequila Blanco, Triple Sec e suco de limão fresco.',
-      de: 'Der mexikanische Klassiker mit Blanco Tequila, Triple Sec und frischem Limettensaft.',
-    },
-    mojito: {
-      en: 'Refreshing Cuban legend with White Rum, fresh mint, lime juice, sugar and club soda.',
-      it: 'Fresco e aromatico con Rum Bianco, Menta fresca, Lime, Zucchero e Soda.',
-      es: 'Refrescante leyenda cubana con Ron Blanco, menta fresca, lima, azúcar y soda.',
-      fr: 'Légende cubaine rafraîchissante au Rhum Blanc, menthe fraîche, citron vert et soda.',
-      pt: 'Lenda cubana refrescante com Rum Branco, hortelã fresca, limão, açúcar e soda.',
-      de: 'Erfrischende kubanische Legende mit weißem Rum, frischer Minze, Limette und Soda.',
-    },
-    'espresso-martini': {
-      en: 'The modern nightlife classic: Vodka, rich coffee liqueur, and fresh espresso.',
-      it: 'Il grande classico moderno della notte: Vodka, liquore al caffè ed espresso fresco.',
-      es: 'El clásico moderno de la noche: Vodka, licor de café y café espresso recién hecho.',
-      fr: 'Le grand classique moderne nocturne: Vodka, liqueur de café et expresso frais.',
-      pt: 'O clássico moderno da noite: Vodka, licor de café e café espresso fresco.',
-      de: 'Der moderne Nachtleben-Klassiker: Vodka, Kaffeelikör und frischer Espresso.',
-    },
-    'gin-tonic': {
-      en: 'The ultimate timeless highball: Botanical Gin, crisp Tonic Water and abundant ice.',
-      it: 'Il long drink senza tempo: Gin botanico, Acqua Tonica premium e ghiaccio a volontà.',
-      es: 'El combinado atemporal: Ginebra botánica, tónica premium y abundante hielo.',
-      fr: 'Le grand classique intemporel: Gin botanique, eau tonique pétillante et glace abondante.',
-      pt: 'O clássico atemporal: Gin botânico, água tônica de qualidade e muito gelo.',
-      de: 'Der zeitlose Longdrink: Botanischer Gin, Tonic Water und reichlich Eis.',
-    },
-  };
-
-  if (taglinesMap[name]?.[lang]) {
-    return taglinesMap[name][lang];
+  const id = cocktail.id.toLowerCase();
+  if (COCKTAIL_METAS[id]?.tagline[lang]) {
+    return COCKTAIL_METAS[id].tagline[lang];
   }
 
+  // Fallback for general structure
+  const name = cocktail.name;
+  if (lang === 'en') return `The classic recipe for ${name}, balanced with premium ingredients and ice.`;
+  if (lang === 'es') return `La receta clásica de ${name}, equilibrada con ingredientes de calidad y hielo.`;
+  if (lang === 'fr') return `La recette classique du ${name}, sublimée par des ingrédients frais et de la glace.`;
+  if (lang === 'pt') return `A receita clássica de ${name}, equilibrada com ingredientes frescos e muito gelo.`;
+  if (lang === 'de') return `Das klassische Rezept für ${name}, perfekt balanciert mit besten Zutaten.`;
+
   return cocktail.tagline;
+}
+
+export function getLocalizedDescription(cocktail: Cocktail, lang: Language): string {
+  if (lang === 'it') return cocktail.description;
+
+  const id = cocktail.id.toLowerCase();
+  if (COCKTAIL_METAS[id]?.description[lang]) {
+    return COCKTAIL_METAS[id].description[lang];
+  }
+
+  return cocktail.description;
 }
 
 // 6. Localized Step-by-Step Instructions
@@ -778,17 +561,24 @@ export function getLocalizedInstructions(instructions: Instructions, lang: Langu
   };
 }
 
-// 7. Full Cocktail Localizer (Ingredients, Glassware, Techniques, Equipment, Tagline, Instructions)
+// 7. Full Cocktail Localizer (Ingredients, Glassware, Techniques, Equipment, Tagline, Description, FlavorProfile, Category)
 export function getLocalizedCocktail(cocktail: Cocktail, lang: Language): Cocktail {
   const glass = getLocalizedGlass(cocktail.glass, lang);
   const technique = getLocalizedTechnique(cocktail.technique, lang);
   const equipment = getLocalizedEquipment(cocktail.equipment, lang);
   const tagline = getLocalizedTagline(cocktail, lang);
+  const description = getLocalizedDescription(cocktail, lang);
+  const category = getLocalizedCategory(cocktail.category, lang);
+  const flavorProfile = getLocalizedFlavorProfile(cocktail.flavorProfile, lang);
   const instructions = getLocalizedInstructions(cocktail.instructions, lang);
 
   const ingredients: Ingredient[] = cocktail.ingredients.map((ing) => ({
     ...ing,
     name: getLocalizedIngredientName(ing.name, lang),
+    brands: {
+      ...ing.brands,
+      notes: ing.brands?.notes ? getLocalizedBrandNotes(ing.brands.notes, lang) : undefined,
+    },
   }));
 
   return {
@@ -797,6 +587,9 @@ export function getLocalizedCocktail(cocktail: Cocktail, lang: Language): Cockta
     technique,
     equipment,
     tagline,
+    description,
+    category,
+    flavorProfile,
     instructions,
     ingredients,
   };
