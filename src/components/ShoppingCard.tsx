@@ -200,7 +200,7 @@ export const ShoppingCard: React.FC<ShoppingCardProps> = ({
               {t.kpiTier}
             </span>
             <span className="text-xs sm:text-base font-black text-[#121212] uppercase tracking-tight truncate block mt-1">
-              {config.brandTier === 'premium' ? 'Enoteca' : 'Supermarket'}
+              {config.brandTier === 'premium' ? t.tierEnotecaLabel : t.tierSupermarketLabel}
             </span>
           </div>
         </div>
@@ -233,8 +233,8 @@ export const ShoppingCard: React.FC<ShoppingCardProps> = ({
                     <span className="text-xs sm:text-sm font-bold text-[#121212] bg-[#F0C020] px-2 py-0.5 border border-[#121212]">
                       {ing.bottlesNeeded}{' '}
                       {ing.totalPieces > 0
-                        ? ing.bottlesNeeded === 1 ? 'confezione' : 'confezioni'
-                        : ing.bottlesNeeded === 1 ? 'bottiglia' : 'bottiglie'}
+                        ? ing.bottlesNeeded === 1 ? t.packSingular : t.packPlural
+                        : ing.bottlesNeeded === 1 ? t.bottleSingular : t.bottlePlural}
                     </span>
                     <span className="text-xs sm:text-sm font-black text-[#121212]">
                       ~{format(ing.totalCost)}

@@ -105,6 +105,12 @@ export interface Translations {
     kpiIce: string;
     kpiIceUnit: (count: number) => string;
     kpiTier: string;
+    tierSupermarketLabel: string;
+    tierEnotecaLabel: string;
+    bottleSingular: string;
+    bottlePlural: string;
+    packSingular: string;
+    packPlural: string;
     ingredientsDetailTitle: string;
     priceDisclaimer: string;
     localSupermarketsLabel: string;
@@ -123,6 +129,8 @@ export interface Translations {
     singleTab: string;
     batchTab: string;
     singleDesc: string;
+    singleGlassBadge: string;
+    guestsSuffix: string;
     batchTitle: (cocktailName: string, drinks: number) => string;
     ratioLabel: string;
     dilutionTipTitle: string;
@@ -135,6 +143,9 @@ export interface Translations {
     glassLabel: string;
     diyHackLabel: string;
     purposeLabel: string;
+    toolsAndHacksTitle: string;
+    goldenRuleTitle: string;
+    goldenRuleText: string;
   };
   mobileFab: {
     jumpToPlan: (cocktailName: string) => string;
@@ -144,6 +155,16 @@ export interface Translations {
     credit: string;
     disclaimer: string;
     backToTop: string;
+    finishedBannerTitle: string;
+    finishedBannerSub: string;
+    partyRulesTitle: string;
+    partyRuleIceTitle: string;
+    partyRuleIceText: string;
+    partyRuleBatchTitle: string;
+    partyRuleBatchText: string;
+    partyRuleGlassesTitle: string;
+    partyRuleGlassesText: string;
+    responsibleDrinkingTitle: string;
   };
 }
 
@@ -254,6 +275,12 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       kpiIce: 'Ice Supply',
       kpiIceUnit: (c) => c === 1 ? '2kg Bag' : '2kg Bags',
       kpiTier: 'Active Brand Tier',
+      tierSupermarketLabel: 'Supermarket',
+      tierEnotecaLabel: 'Wine Shop',
+      bottleSingular: 'bottle',
+      bottlePlural: 'bottles',
+      packSingular: 'pack',
+      packPlural: 'packs',
       ingredientsDetailTitle: 'Item Details with Estimated Price:',
       priceDisclaimer: 'Average estimated retail prices',
       localSupermarketsLabel: 'Recommended Local Stores:',
@@ -272,6 +299,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       singleTab: 'Single Serve',
       batchTab: 'Pitcher (Batch Party)',
       singleDesc: 'Classic on-demand single cocktail method:',
+      singleGlassBadge: '1 Glass',
+      guestsSuffix: 'Guests',
       batchTitle: (name, count) => `Pitcher for ${count} Drinks of ${name}`,
       ratioLabel: 'Proportions & Formula:',
       dilutionTipTitle: 'Golden Rule: Thermal Dilution (15%)',
@@ -284,6 +313,9 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       glassLabel: 'Glass:',
       diyHackLabel: 'DIY Hack:',
       purposeLabel: 'Why it matters:',
+      toolsAndHacksTitle: 'Bar Tools & Kitchen Hacks:',
+      goldenRuleTitle: 'Golden Rule:',
+      goldenRuleText: 'Always chill your glassware in the freezer or with ice cubes before pouring.',
     },
     mobileFab: {
       jumpToPlan: (name) => `🍸 View Plan: ${name}`,
@@ -293,6 +325,16 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       credit: 'Created to celebrate the art of zero-waste home bartending.',
       disclaimer: 'Drink responsibly.',
       backToTop: 'Back to Top',
+      finishedBannerTitle: 'Finished planning?',
+      finishedBannerSub: 'Go back to top to choose another cocktail or adjust filters',
+      partyRulesTitle: 'Golden Rules for the Party',
+      partyRuleIceTitle: 'Ice Supply:',
+      partyRuleIceText: 'Never run low, calculate 1 bag of 2kg for every 10-12 drinks.',
+      partyRuleBatchTitle: 'Pitcher Batching:',
+      partyRuleBatchText: 'For pitchers without ice, add 15% chilled water for thermal dilution.',
+      partyRuleGlassesTitle: 'Chilled Glasses:',
+      partyRuleGlassesText: 'Chill your glassware in the freezer before your guests arrive.',
+      responsibleDrinkingTitle: 'Drink Responsibly',
     },
   },
 
@@ -402,6 +444,12 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       kpiIce: 'Ghiaccio Fabbisogno',
       kpiIceUnit: (c) => c === 1 ? 'Sacco 2kg' : 'Sacchi 2kg',
       kpiTier: 'Fascia Prezzo Attiva',
+      tierSupermarketLabel: 'Supermercato',
+      tierEnotecaLabel: 'Enoteca',
+      bottleSingular: 'bottiglia',
+      bottlePlural: 'bottiglie',
+      packSingular: 'confezione',
+      packPlural: 'confezioni',
       ingredientsDetailTitle: 'Dettaglio Articoli con Stima Prezzo:',
       priceDisclaimer: 'Prezzi medi stimati supermercati/enoteche',
       localSupermarketsLabel: 'Supermercati locali consigliati:',
@@ -420,6 +468,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       singleTab: 'Singolo Drink',
       batchTab: 'Caraffa (Batch Party)',
       singleDesc: 'Metodo classico passo-passo al momento:',
+      singleGlassBadge: '1 Bicchiere',
+      guestsSuffix: 'Ospiti',
       batchTitle: (name, count) => `Caraffa per ${count} Drink di ${name}`,
       ratioLabel: 'Proporzioni & Formula:',
       dilutionTipTitle: 'Regola d\'Oro: Diluizione Termica (15%)',
@@ -432,6 +482,9 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       glassLabel: 'Bicchiere:',
       diyHackLabel: 'Fai da te:',
       purposeLabel: 'A cosa serve:',
+      toolsAndHacksTitle: 'Strumenti & Trucchi Casalinghi:',
+      goldenRuleTitle: 'Regola d\'oro:',
+      goldenRuleText: 'Raffredda sempre i bicchieri in frigorifero o con cubetti di ghiaccio prima di versare il drink.',
     },
     mobileFab: {
       jumpToPlan: (name) => `🍸 Vai al Piano: ${name}`,
@@ -441,6 +494,16 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       credit: 'Creato per celebrare l\'arte della miscelazione casalinga senza sprechi.',
       disclaimer: 'Bevi responsabilmente.',
       backToTop: 'Torna all\'Inizio',
+      finishedBannerTitle: 'Hai finito di pianificare?',
+      finishedBannerSub: 'Torna all\'inizio per scegliere un altro cocktail o cambiare i filtri',
+      partyRulesTitle: 'Regole d\'Oro del Party',
+      partyRuleIceTitle: 'Ghiaccio:',
+      partyRuleIceText: 'Mai lesinare, calcola sempre 1 sacco da 2kg ogni 10-12 drink.',
+      partyRuleBatchTitle: 'Batching in Caraffa:',
+      partyRuleBatchText: 'In caraffa senza ghiaccio, aggiungi il 15% di acqua fredda per la diluizione.',
+      partyRuleGlassesTitle: 'Bicchieri Freddi:',
+      partyRuleGlassesText: 'Metti sempre i bicchieri in frigo prima che arrivino gli ospiti.',
+      responsibleDrinkingTitle: 'Bevi Responsabilmente',
     },
   },
 
@@ -550,6 +613,12 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       kpiIce: 'Hielo Necesario',
       kpiIceUnit: (c) => c === 1 ? 'Bolsa 2kg' : 'Bolsas 2kg',
       kpiTier: 'Gama de Precio Activa',
+      tierSupermarketLabel: 'Supermercado',
+      tierEnotecaLabel: 'Licorería',
+      bottleSingular: 'botella',
+      bottlePlural: 'botellas',
+      packSingular: 'paquete',
+      packPlural: 'paquetes',
       ingredientsDetailTitle: 'Detalle de Artículos y Precio Estimado:',
       priceDisclaimer: 'Precios minoristas medios estimados',
       localSupermarketsLabel: 'Supermercados recomendados:',
@@ -568,6 +637,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       singleTab: 'Copa Individual',
       batchTab: 'Jarra (Batch Party)',
       singleDesc: 'Método clásico paso a paso en el momento:',
+      singleGlassBadge: '1 Copa',
+      guestsSuffix: 'Invitados',
       batchTitle: (name, count) => `Jarra para ${count} Copas de ${name}`,
       ratioLabel: 'Proporciones y Fórmula:',
       dilutionTipTitle: 'Regla de Oro: Dilución Térmica (15%)',
@@ -580,6 +651,9 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       glassLabel: 'Copa / Vaso:',
       diyHackLabel: 'Truco DIY:',
       purposeLabel: 'Por qué importa:',
+      toolsAndHacksTitle: 'Herramientas de Bar y Trucos Caseros:',
+      goldenRuleTitle: 'Regla de oro:',
+      goldenRuleText: 'Enfría siempre las copas en el congelador o con cubitos de hielo antes de servir.',
     },
     mobileFab: {
       jumpToPlan: (name) => `🍸 Ver Plan: ${name}`,
@@ -589,6 +663,16 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       credit: 'Creado para celebrar el arte de la coctelería casera sin desperdicios.',
       disclaimer: 'Bebe con responsabilidad.',
       backToTop: 'Volver Arriba',
+      finishedBannerTitle: '¿Terminaste de planificar?',
+      finishedBannerSub: 'Vuelve arriba para elegir otro cóctel o cambiar los filtros',
+      partyRulesTitle: 'Reglas de Oro para la Fiesta',
+      partyRuleIceTitle: 'Hielo:',
+      partyRuleIceText: 'Nunca escatimes, calcula siempre 1 bolsa de 2kg por cada 10-12 copas.',
+      partyRuleBatchTitle: 'Jarras de Grupo:',
+      partyRuleBatchText: 'En jarra sin hielo, añade un 15% de agua fría para la dilución perfecta.',
+      partyRuleGlassesTitle: 'Copas Frías:',
+      partyRuleGlassesText: 'Enfría siempre las copas en el congelador antes de que lleguen los invitados.',
+      responsibleDrinkingTitle: 'Bebe con Responsabilidad',
     },
   },
 
@@ -698,6 +782,12 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       kpiIce: 'Glaçons Requis',
       kpiIceUnit: (c) => c === 1 ? 'Sac 2kg' : 'Sacs 2kg',
       kpiTier: 'Gamme de Prix Active',
+      tierSupermarketLabel: 'Supermarché',
+      tierEnotecaLabel: 'Caviste',
+      bottleSingular: 'bouteille',
+      bottlePlural: 'bouteilles',
+      packSingular: 'paquet',
+      packPlural: 'paquets',
       ingredientsDetailTitle: 'Détail des Articles & Prix Estimés:',
       priceDisclaimer: 'Prix de détail moyens estimés',
       localSupermarketsLabel: 'Supermarchés recommandés:',
@@ -716,6 +806,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       singleTab: 'Verre Individuel',
       batchTab: 'Pichet (Batch Party)',
       singleDesc: 'Méthode classique minute verre par verre:',
+      singleGlassBadge: '1 Verre',
+      guestsSuffix: 'Invités',
       batchTitle: (name, count) => `Pichet pour ${count} Verres de ${name}`,
       ratioLabel: 'Proportions & Formule:',
       dilutionTipTitle: 'Règle d\'Or: Dilution Thermique (15%)',
@@ -728,6 +820,9 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       glassLabel: 'Verre:',
       diyHackLabel: 'Astuce DIY:',
       purposeLabel: 'Pourquoi c\'est utile:',
+      toolsAndHacksTitle: 'Outils de Bar & Astuces Maison:',
+      goldenRuleTitle: 'Règle d\'or:',
+      goldenRuleText: 'Refroidissez toujours vos verres au congélateur ou avec des glaçons avant de servir.',
     },
     mobileFab: {
       jumpToPlan: (name) => `🍸 Voir le Plan: ${name}`,
@@ -737,6 +832,16 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       credit: 'Créé pour célébrer l\'art du cocktail maison sans gaspillage.',
       disclaimer: 'À consommer avec modération.',
       backToTop: 'Retour en Haut',
+      finishedBannerTitle: 'Planification terminée?',
+      finishedBannerSub: 'Retournez en haut pour choisir un autre cocktail ou modifier les filtres',
+      partyRulesTitle: 'Règles d\'Or pour la Fête',
+      partyRuleIceTitle: 'Stock de Glaçons:',
+      partyRuleIceText: 'Ne soyez jamais à court, prévoyez 1 sac de 2kg pour 10-12 verres.',
+      partyRuleBatchTitle: 'Préparation en Pichet:',
+      partyRuleBatchText: 'En pichet sans glace, ajoutez 15% d\'eau très fraîche pour la dilution idéale.',
+      partyRuleGlassesTitle: 'Verres Givrés:',
+      partyRuleGlassesText: 'Placez toujours vos verres au frais avant l\'arrivée de vos invités.',
+      responsibleDrinkingTitle: 'Consommez avec Modération',
     },
   },
 
@@ -846,6 +951,12 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       kpiIce: 'Gelo Necessário',
       kpiIceUnit: (c) => c === 1 ? 'Saco 2kg' : 'Sacos 2kg',
       kpiTier: 'Faixa de Preço Ativa',
+      tierSupermarketLabel: 'Supermercado',
+      tierEnotecaLabel: 'Adega',
+      bottleSingular: 'garrafa',
+      bottlePlural: 'garrafas',
+      packSingular: 'pacote',
+      packPlural: 'pacotes',
       ingredientsDetailTitle: 'Detalhe dos Itens e Preço Estimado:',
       priceDisclaimer: 'Preços médios de varejo estimados',
       localSupermarketsLabel: 'Supermercados locais recomendados:',
@@ -864,6 +975,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       singleTab: 'Drink Individual',
       batchTab: 'Jarra (Batch Party)',
       singleDesc: 'Método clássico copo a copo na hora:',
+      singleGlassBadge: '1 Copo',
+      guestsSuffix: 'Convidados',
       batchTitle: (name, count) => `Jarra para ${count} Drinks de ${name}`,
       ratioLabel: 'Proporções e Fórmula:',
       dilutionTipTitle: 'Regra de Ouro: Diluição Térmica (15%)',
@@ -876,6 +989,9 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       glassLabel: 'Copo / Taça:',
       diyHackLabel: 'Dica DIY:',
       purposeLabel: 'Por que é importante:',
+      toolsAndHacksTitle: 'Utensílios de Bar & Dicas Caseiras:',
+      goldenRuleTitle: 'Regra de ouro:',
+      goldenRuleText: 'Sempre gele os copos no congelador ou com cubos de gelo antes de servir.',
     },
     mobileFab: {
       jumpToPlan: (name) => `🍸 Ver Plano: ${name}`,
@@ -885,6 +1001,16 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       credit: 'Criado para celebrar a arte da coquetelaria em casa sem desperdício.',
       disclaimer: 'Beba com moderação.',
       backToTop: 'Voltar ao Topo',
+      finishedBannerTitle: 'Terminou o planejamento?',
+      finishedBannerSub: 'Volte ao topo para escolher outro drink ou ajustar os filtros',
+      partyRulesTitle: 'Regras de Ouro para a Festa',
+      partyRuleIceTitle: 'Gelo:',
+      partyRuleIceText: 'Nunca economize, calcule sempre 1 saco de 2kg para cada 10-12 drinks.',
+      partyRuleBatchTitle: 'Jarras de Grupo:',
+      partyRuleBatchText: 'Em jarra sem gelo, adicione 15% de água gelada para a diluição ideal.',
+      partyRuleGlassesTitle: 'Copos Gelados:',
+      partyRuleGlassesText: 'Sempre gele os copos na geladeira antes dos convidados chegarem.',
+      responsibleDrinkingTitle: 'Beba com Moderação',
     },
   },
 
@@ -994,6 +1120,12 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       kpiIce: 'Eisbedarf',
       kpiIceUnit: (c) => c === 1 ? '2kg Beutel' : '2kg Beutel',
       kpiTier: 'Aktive Preisklasse',
+      tierSupermarketLabel: 'Supermarkt',
+      tierEnotecaLabel: 'Fachhandel',
+      bottleSingular: 'Flasche',
+      bottlePlural: 'Flaschen',
+      packSingular: 'Packung',
+      packPlural: 'Packungen',
       ingredientsDetailTitle: 'Artikeldetails mit geschätzten Preisen:',
       priceDisclaimer: 'Durchschnittliche geschätzte Einzelhandelspreise',
       localSupermarketsLabel: 'Empfohlene Supermärkte / Märkte:',
@@ -1012,6 +1144,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       singleTab: 'Einzelner Drink',
       batchTab: 'Kanne (Batch Party)',
       singleDesc: 'Klassische Zubereitung Glas für Glas:',
+      singleGlassBadge: '1 Glas',
+      guestsSuffix: 'Gäste',
       batchTitle: (name, count) => `Kanne für ${count} Drinks von ${name}`,
       ratioLabel: 'Verhältnisse & Formel:',
       dilutionTipTitle: 'Goldene Regel: Thermische Verwässerung (15%)',
@@ -1024,6 +1158,9 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       glassLabel: 'Glas:',
       diyHackLabel: 'DIY-Trick:',
       purposeLabel: 'Warum es wichtig ist:',
+      toolsAndHacksTitle: 'Bar-Equipment & Küchen-Tricks:',
+      goldenRuleTitle: 'Goldene Regel:',
+      goldenRuleText: 'Kühle deine Gläser vor dem Servieren immer im Eisfach oder mit Eiswürfeln vor.',
     },
     mobileFab: {
       jumpToPlan: (name) => `🍸 Zum Plan: ${name}`,
@@ -1033,6 +1170,16 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       credit: 'Entwickelt für das perfekte Home-Bartending ohne Verschwendung.',
       disclaimer: 'Bitte verantwortungsvoll trinken.',
       backToTop: 'Nach Oben',
+      finishedBannerTitle: 'Planung abgeschlossen?',
+      finishedBannerSub: 'Gehe nach oben, um einen anderen Cocktail zu wählen oder Filter anzupassen',
+      partyRulesTitle: 'Goldene Regeln für die Party',
+      partyRuleIceTitle: 'Eisvorrat:',
+      partyRuleIceText: 'Niemals sparen: Plane 1 Beutel à 2kg für alle 10-12 Drinks ein.',
+      partyRuleBatchTitle: 'Kannen-Batching:',
+      partyRuleBatchText: 'In der Kanne ohne Eis: 15% kaltes Wasser für die ideale Schmelzwasser-Verdünnung zugeben.',
+      partyRuleGlassesTitle: 'Vorgekühlte Gläser:',
+      partyRuleGlassesText: 'Stelle die Gläser vor Eintreffen der Gäste immer kurz in den Kühlschrank.',
+      responsibleDrinkingTitle: 'Verantwortungsvoll Genießen',
     },
   },
 };

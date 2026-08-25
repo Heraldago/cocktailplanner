@@ -91,15 +91,15 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                     <div className="space-y-2 text-[11px] font-medium text-[#121212]">
                       <div className="flex items-center gap-2">
                         <BauhausShape shape="square" color="yellow" size={18} />
-                        <span><strong>Quadrato:</strong> Bitter & Aperitivo</span>
+                        <span>{t.legend.squareBitter}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <BauhausShape shape="triangle" color="blue" size={18} />
-                        <span><strong>Triangolo:</strong> Dolce & Sour / Tropicale</span>
+                        <span>{t.legend.triangleSweetSour}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <BauhausShape shape="circle" color="red" size={18} />
-                        <span><strong>Cerchio:</strong> Dry & Spirit-Forward</span>
+                        <span>{t.legend.circleDry}</span>
                       </div>
                     </div>
                   </div>
@@ -112,15 +112,15 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                     <div className="space-y-2 text-[11px] font-medium text-[#121212]">
                       <div className="flex items-center gap-2">
                         <span className="w-4 h-4 bg-[#F0C020] border-2 border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
-                        <span><strong>Giallo:</strong> Leggero (&lt;15% ABV)</span>
+                        <span>{t.legend.light}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="w-4 h-4 bg-[#1040C0] border-2 border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
-                        <span><strong>Blu:</strong> Medio (15-25% ABV)</span>
+                        <span>{t.legend.medium}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="w-4 h-4 bg-[#D02020] border-2 border-[#121212] inline-block shadow-[1px_1px_0px_0px_#121212]" />
-                        <span><strong>Rosso:</strong> Forte (&gt;25% ABV)</span>
+                        <span>{t.legend.strong}</span>
                       </div>
                     </div>
                   </div>

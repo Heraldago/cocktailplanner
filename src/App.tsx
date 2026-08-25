@@ -220,8 +220,9 @@ export const App: React.FC = () => {
             totalDrinks={partyResult.totalDrinks}
             totalShoppingCost={partyResult.totalShoppingCost}
             costPerPerson={partyResult.costPerPerson}
-            cocktailName={selectedCocktail.name}
+            cocktailName={localizedCocktail.name}
             lang={lang}
+            country={currentCountryConfig}
           />
         </section>
 

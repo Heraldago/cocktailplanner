@@ -63,7 +63,7 @@ export const EquipmentCard: React.FC<EquipmentCardProps> = ({
         {/* Equipment vs DIY Items */}
         <div className="space-y-3 mt-4">
           <span className="text-xs font-black uppercase tracking-wider text-[#121212] block">
-            {lang === 'it' ? 'Strumenti & Trucchi Casalinghi:' : 'Bar Tools & Kitchen Hacks:'}
+            {t.toolsAndHacksTitle}
           </span>
 
           <div className="space-y-2.5 sm:space-y-3">
@@ -111,7 +111,7 @@ export const EquipmentCard: React.FC<EquipmentCardProps> = ({
 
       {/* Pro tip footer */}
       <div className="mt-5 p-2.5 sm:p-3 bg-[#F0F0F0] border-2 border-[#121212] text-[11px] sm:text-xs font-medium text-[#121212]">
-        <strong>💡 {lang === 'it' ? 'Regola d\'oro:' : 'Golden Rule:'}</strong> {lang === 'it' ? 'Raffredda sempre i bicchieri in frigorifero o con cubetti di ghiaccio prima di versare il drink.' : 'Always chill your glassware in the freezer or with ice cubes before pouring.'}
+        <strong>💡 {t.goldenRuleTitle}</strong> {t.goldenRuleText}
       </div>
     </div>
   );

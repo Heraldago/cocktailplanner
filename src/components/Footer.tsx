@@ -27,10 +27,10 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
             </div>
             <div>
               <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white block">
-                {lang === 'it' ? 'Hai finito di pianificare?' : 'Finished planning?'}
+                {t.finishedBannerTitle}
               </span>
               <span className="text-[11px] sm:text-xs text-white/70">
-                {lang === 'it' ? 'Torna all\'inizio per scegliere un altro cocktail o cambiare i filtri' : 'Go back to top to choose another cocktail or adjust filters'}
+                {t.finishedBannerSub}
               </span>
             </div>
           </div>
@@ -74,17 +74,17 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           {/* Quick Party Rules */}
           <div className="md:col-span-4 space-y-2">
             <h5 className="text-xs font-black uppercase tracking-widest text-[#F0C020]">
-              {lang === 'it' ? 'Regole d\'Oro del Party' : 'Golden Rules for the Party'}
+              {t.partyRulesTitle}
             </h5>
             <ul className="text-xs text-white/80 space-y-1.5 list-disc pl-4 font-medium">
               <li>
-                <strong className="text-white">{lang === 'it' ? 'Ghiaccio:' : 'Ice:'}</strong> {lang === 'it' ? 'Mai lesinare, calcola sempre 1 sacco da 2kg ogni 10-12 drink.' : 'Never run low, calculate 1 bag of 2kg for every 10-12 drinks.'}
+                <strong className="text-white">{t.partyRuleIceTitle}</strong> {t.partyRuleIceText}
               </li>
               <li>
-                <strong className="text-white">{lang === 'it' ? 'Batching:' : 'Batching:'}</strong> {lang === 'it' ? 'In caraffa senza ghiaccio, aggiungi il 15% di acqua fredda per la diluizione.' : 'For pitchers without ice, add 15% chilled water for thermal dilution.'}
+                <strong className="text-white">{t.partyRuleBatchTitle}</strong> {t.partyRuleBatchText}
               </li>
               <li>
-                <strong className="text-white">{lang === 'it' ? 'Bicchieri freddi:' : 'Chilled glasses:'}</strong> {lang === 'it' ? 'Metti sempre i bicchieri in frigo prima del party.' : 'Chill your glasses in the freezer before the party.'}
+                <strong className="text-white">{t.partyRuleGlassesTitle}</strong> {t.partyRuleGlassesText}
               </li>
             </ul>
           </div>
@@ -92,7 +92,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           {/* Responsible drinking */}
           <div className="md:col-span-3 space-y-2">
             <h5 className="text-xs font-black uppercase tracking-widest text-[#D02020] flex items-center gap-1.5">
-              <ShieldAlert className="w-4 h-4" /> {lang === 'it' ? 'Bevi Responsabilmente' : 'Drink Responsibly'}
+              <ShieldAlert className="w-4 h-4" /> {t.responsibleDrinkingTitle}
             </h5>
             <p className="text-xs text-white/70 leading-relaxed font-medium">
               {t.disclaimer}

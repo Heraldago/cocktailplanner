@@ -79,7 +79,7 @@ export const PreparationCard: React.FC<PreparationCardProps> = ({
                 {t.singleDesc}
               </span>
               <span className="text-[10px] font-bold uppercase bg-white px-2 py-0.5 border border-[#121212] shrink-0">
-                1 {lang === 'it' ? 'Bicchiere' : 'Glass'}
+                {t.singleGlassBadge}
               </span>
             </div>
 
@@ -111,7 +111,7 @@ export const PreparationCard: React.FC<PreparationCardProps> = ({
               <div className="flex items-center gap-1.5 text-xs font-black uppercase text-[#D02020]">
                 <Sparkles className="w-4 h-4 shrink-0" />
                 <span>
-                  {t.batchTitle(cocktailName, totalDrinks)} ({totalGuests} {lang === 'it' ? 'Ospiti' : 'Guests'})
+                  {t.batchTitle(cocktailName, totalDrinks)} ({totalGuests} {t.guestsSuffix})
                 </span>
               </div>
               <p className="text-xs font-bold text-[#121212] leading-snug">

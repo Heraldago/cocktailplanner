@@ -2,6 +2,7 @@ import React from 'react';
 import { Users, Minus, Plus, Coins, GlassWater } from 'lucide-react';
 import { PartyConfig, PartyIntensity } from '../types/cocktail';
 import { Language, TRANSLATIONS } from '../i18n/translations';
+import { CountryConfig, formatCurrency } from '../utils/countryLocalization';
 
 interface PartyConfiguratorProps {
   config: PartyConfig;
@@ -12,6 +13,7 @@ interface PartyConfiguratorProps {
   costPerPerson?: number;
   cocktailName: string;
   lang: Language;
+  country: CountryConfig;
 }
 
 export const PartyConfigurator: React.FC<PartyConfiguratorProps> = ({
@@ -23,6 +25,7 @@ export const PartyConfigurator: React.FC<PartyConfiguratorProps> = ({
   costPerPerson,
   cocktailName,
   lang,
+  country,
 }) => {
   const t = TRANSLATIONS[lang].configurator;
 
@@ -107,7 +110,10 @@ export const PartyConfigurator: React.FC<PartyConfiguratorProps> = ({
                 {t.estimatedBudgetBadge}
               </span>
               <span className="text-sm sm:text-lg font-black text-[#121212]">
-                ~€ {totalShoppingCost.toFixed(0)} <span className="text-[11px] sm:text-xs text-[#1040C0]">({costPerPerson.toFixed(2)}€/p)</span>
+                ~{formatCurrency(totalShoppingCost, country)}{' '}
+                <span className="text-[11px] sm:text-xs text-[#1040C0]">
+                  ({formatCurrency(costPerPerson, country)}/{t.personSingular})
+                </span>
               </span>
             </div>
           )}
@@ -136,7 +142,7 @@ export const PartyConfigurator: React.FC<PartyConfiguratorProps> = ({
               <button
                 type="button"
                 onClick={() => onChangeGuests(Math.max(1, config.guestsCount - 1))}
-                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-[#F0F0F0] hover:bg-[#E0E0E0] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none font-bold"
+                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-[#F0F0F0] hover:bg-[#E0E0E0] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none font-bold cursor-pointer"
                 aria-label="Decrease guests"
               >
                 <Minus className="w-4 h-4" />
@@ -147,7 +153,7 @@ export const PartyConfigurator: React.FC<PartyConfiguratorProps> = ({
               <button
                 type="button"
                 onClick={() => onChangeGuests(Math.min(30, config.guestsCount + 1))}
-                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-[#F0F0F0] hover:bg-[#E0E0E0] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none font-bold"
+                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-[#F0F0F0] hover:bg-[#E0E0E0] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none font-bold cursor-pointer"
                 aria-label="Increase guests"
               >
                 <Plus className="w-4 h-4" />
@@ -182,13 +188,13 @@ export const PartyConfigurator: React.FC<PartyConfiguratorProps> = ({
                 key={preset}
                 type="button"
                 onClick={() => onChangeGuests(preset)}
-                className={`px-2 py-0.5 text-xs font-bold uppercase border-2 border-[#121212] transition-all duration-100 ${
+                className={`px-2 py-0.5 text-xs font-bold uppercase border-2 border-[#121212] transition-all duration-100 cursor-pointer ${
                   config.guestsCount === preset
                     ? 'bg-[#121212] text-white shadow-[2px_2px_0px_0px_#D02020]'
                     : 'bg-[#F0F0F0] text-[#121212] hover:bg-white shadow-[2px_2px_0px_0px_#121212]'
                 }`}
               >
-                {preset} p.
+                {preset} {preset === 1 ? t.personSingular : t.personPlural}
               </button>
             ))}
           </div>
@@ -205,7 +211,7 @@ export const PartyConfigurator: React.FC<PartyConfiguratorProps> = ({
               <button
                 type="button"
                 onClick={() => handleSelectDrinks(Math.max(1, currentDrinksPerPerson - 1))}
-                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-[#F0F0F0] hover:bg-[#E0E0E0] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none font-bold"
+                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-[#F0F0F0] hover:bg-[#E0E0E0] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none font-bold cursor-pointer"
                 aria-label="Decrease drinks per person"
               >
                 <Minus className="w-4 h-4" />
@@ -217,7 +223,7 @@ export const PartyConfigurator: React.FC<PartyConfiguratorProps> = ({
               <button
                 type="button"
                 onClick={() => handleSelectDrinks(Math.min(5, currentDrinksPerPerson + 1))}
-                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-[#F0F0F0] hover:bg-[#E0E0E0] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none font-bold"
+                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-[#F0F0F0] hover:bg-[#E0E0E0] text-[#121212] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none font-bold cursor-pointer"
                 aria-label="Increase drinks per person"
               >
                 <Plus className="w-4 h-4" />
@@ -234,7 +240,7 @@ export const PartyConfigurator: React.FC<PartyConfiguratorProps> = ({
                   key={opt.key}
                   type="button"
                   onClick={() => handleSelectDrinks(opt.drinks)}
-                  className={`p-1.5 sm:p-2 text-center border-2 border-[#121212] flex flex-col items-center justify-between transition-all duration-100 ${
+                  className={`p-1.5 sm:p-2 text-center border-2 border-[#121212] flex flex-col items-center justify-between transition-all duration-100 cursor-pointer ${
                     isSelected
                       ? 'bg-[#1040C0] text-white shadow-[3px_3px_0px_0px_#121212] -translate-y-0.5'
                       : 'bg-[#F0F0F0] text-[#121212] shadow-[2px_2px_0px_0px_#121212] hover:bg-white'

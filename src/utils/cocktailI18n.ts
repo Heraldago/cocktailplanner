@@ -681,7 +681,73 @@ export function getLocalizedInstructions(instructions: Instructions, lang: Langu
     return t;
   };
 
+  const translateBatchRatio = (ratio: string, l: Language): string => {
+    if (l === 'it') return ratio;
+    let t = ratio;
+    if (l === 'en') {
+      t = t.replace(/Rapporto/gi, 'Ratio');
+      t = t.replace(/Parti uguali/gi, 'Equal parts');
+      t = t.replace(/la soda e il prosecco vanno aperti all'ultimo istante/gi, 'open sparkling wine and soda at the very last moment');
+      t = t.replace(/Nota:/gi, 'Note:');
+    } else if (l === 'es') {
+      t = t.replace(/Rapporto/gi, 'Proporción');
+      t = t.replace(/Parti uguali/gi, 'Partes iguales');
+      t = t.replace(/la soda e il prosecco vanno aperti all'ultimo istante/gi, 'abrir el vino espumoso y la soda en el último momento');
+      t = t.replace(/Nota:/gi, 'Nota:');
+    } else if (l === 'fr') {
+      t = t.replace(/Rapporto/gi, 'Proportions');
+      t = t.replace(/Parti uguali/gi, 'Parts égales');
+      t = t.replace(/la soda e il prosecco vanno aperti all'ultimo istante/gi, 'ouvrir le vin effervescent et le soda au dernier moment');
+      t = t.replace(/Nota:/gi, 'Note:');
+    } else if (l === 'pt') {
+      t = t.replace(/Rapporto/gi, 'Proporção');
+      t = t.replace(/Parti uguali/gi, 'Partes iguais');
+      t = t.replace(/la soda e il prosecco vanno aperti all'ultimo istante/gi, 'abrir o espumante e a soda no último momento');
+      t = t.replace(/Nota:/gi, 'Nota:');
+    } else if (l === 'de') {
+      t = t.replace(/Rapporto/gi, 'Mischverhältnis');
+      t = t.replace(/Parti uguali/gi, 'Gleiche Teile');
+      t = t.replace(/la soda e il prosecco vanno aperti all'ultimo istante/gi, 'Schaumwein und Soda erst unmittelbar vor dem Servieren öffnen');
+      t = t.replace(/Nota:/gi, 'Hinweis:');
+    }
+    return t;
+  };
+
+  const translateBatchStep = (step: string, l: Language): string => {
+    if (l === 'it') return step;
+    let t = step;
+    if (l === 'en') {
+      t = t.replace(/Prepara una caraffa con solo.*/i, 'Pour all measured spirits and base ingredients into the pitcher (without ice).');
+      t = t.replace(/Conserva.*frigo.*/i, 'Store the sealed pitcher in the refrigerator until ready to serve.');
+      t = t.replace(/Al momento del brindisi.*/i, 'When serving, stir once with chilled water/soda and pour over ice into pre-chilled glasses.');
+      t = t.replace(/Miscela tutti gli ingredienti.*/i, 'Combine all spirit ingredients in the pitcher and chill thoroughly.');
+    } else if (l === 'es') {
+      t = t.replace(/Prepara una caraffa con solo.*/i, 'Verter todos los destilados y bases en la jarra (sin hielo).');
+      t = t.replace(/Conserva.*frigo.*/i, 'Guardar la jarra tapada en el frigorífico hasta el momento de servir.');
+      t = t.replace(/Al momento del brindisi.*/i, 'Al momento de servir, remover una vez y verter en vasos con hielo fresco.');
+      t = t.replace(/Miscela tutti gli ingredienti.*/i, 'Mezclar todos los ingredientes en la jarra y enfriar en la nevera.');
+    } else if (l === 'fr') {
+      t = t.replace(/Prepara una caraffa con solo.*/i, 'Verser tous les spiritueux et bases dans le pichet (sans glace).');
+      t = t.replace(/Conserva.*frigo.*/i, 'Conserver le pichet fermé au réfrigérateur jusqu\'au service.');
+      t = t.replace(/Al momento del brindisi.*/i, 'Au moment de servir, mélanger une fois et verser sur glaçons dans les verres.');
+      t = t.replace(/Miscela tutti gli ingredienti.*/i, 'Mélanger tous les ingrédients dans le pichet et placer au frais.');
+    } else if (l === 'pt') {
+      t = t.replace(/Prepara una caraffa con solo.*/i, 'Despeje todos os destilados e bases na jarra (sem gelo).');
+      t = t.replace(/Conserva.*frigo.*/i, 'Guarde a jarra tampada na geladeira até a hora de servir.');
+      t = t.replace(/Al momento del brindisi.*/i, 'Na hora de servir, mexa uma vez e despeje nos copos com gelo novo.');
+      t = t.replace(/Miscela tutti gli ingredienti.*/i, 'Misture todos os ingredientes na jarra e mantenha bem gelado.');
+    } else if (l === 'de') {
+      t = t.replace(/Prepara una caraffa con solo.*/i, 'Alle Spirituosen und Zutaten in die Kanne geben (ohne Eis).');
+      t = t.replace(/Conserva.*frigo.*/i, 'Die verschlossene Kanne bis zum Servieren im Kühlschrank kaltstellen.');
+      t = t.replace(/Al momento del brindisi.*/i, 'Beim Servieren einmal umrühren und in Gläser mit frischem Eis einschenken.');
+      t = t.replace(/Miscela tutti gli ingredienti.*/i, 'Alle Zutaten in der Kanne mischen und gründlich vorkühlen.');
+    }
+    return t;
+  };
+
   const translatedSingle = instructions.single.map((s) => translateStep(s, lang));
+  const translatedBatchSteps = instructions.batch.steps.map((s) => translateBatchStep(s, lang));
+  const translatedRatio = translateBatchRatio(instructions.batch.ratioExplanation, lang);
 
   const dilutionTipMap: Record<Language, string> = {
     en: 'Add ~15% cold filtered water to the batch pitcher to replicate the chilling dilution of melting ice, ensuring smooth drinkability.',
@@ -704,7 +770,8 @@ export function getLocalizedInstructions(instructions: Instructions, lang: Langu
   return {
     single: translatedSingle,
     batch: {
-      ...instructions.batch,
+      ratioExplanation: translatedRatio,
+      steps: translatedBatchSteps,
       dilutionTip: dilutionTipMap[lang] || instructions.batch.dilutionTip,
       coolingTip: coolingTipMap[lang] || instructions.batch.coolingTip,
     },
