@@ -22,48 +22,48 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="w-full bg-[#FFFFFF] border-b-4 border-[#121212] sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
-        {/* Brand Logo & Title */}
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-          <div className="flex items-center gap-3">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3">
+        {/* Brand Logo & Title Row */}
+        <div className="flex items-center justify-between w-full sm:w-auto gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {/* Bauhaus 3-Shape Mini Logo */}
-            <div className="flex items-center gap-1 p-1.5 bg-[#F0F0F0] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212]">
-              <span className="w-4 h-4 rounded-full bg-[#D02020] border border-[#121212]" title="Circle - Red" />
-              <span className="w-4 h-4 rounded-none bg-[#1040C0] border border-[#121212]" title="Square - Blue" />
-              <span className="w-4 h-4 bg-[#F0C020] clip-triangle border border-[#121212]" title="Triangle - Yellow" />
+            <div className="flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 bg-[#F0F0F0] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] shrink-0">
+              <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-[#D02020] border border-[#121212]" title="Circle - Red" />
+              <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-none bg-[#1040C0] border border-[#121212]" title="Square - Blue" />
+              <span className="w-3 h-3 sm:w-4 sm:h-4 bg-[#F0C020] clip-triangle border border-[#121212]" title="Triangle - Yellow" />
             </div>
 
-            <div>
-              <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase tracking-tight text-[#121212] leading-none">
+            {/* Title + Made By + Logo in a single, strictly horizontal row */}
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2.5 flex-nowrap">
+                <h1 className="text-sm xs:text-base sm:text-2xl lg:text-3xl font-black uppercase tracking-tight text-[#121212] leading-none whitespace-nowrap">
                   {t.title}
                 </h1>
 
-                {/* Author: tiny "made by" + 40x40px borderless logo */}
-                <div className="flex items-center gap-1.5 ml-0.5">
-                  <span className="text-[10px] sm:text-[11px] font-bold text-[#121212]/70 lowercase tracking-tight">
+                {/* Author: tiny "made by" + logo (always strictly side-by-side on same row) */}
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="text-[9px] sm:text-[11px] font-bold text-[#121212]/70 lowercase tracking-tight">
                     made by
                   </span>
                   <img
                     src="/author-logo.png"
                     alt="HN Logo"
-                    className="w-10 h-10 rounded-full object-cover"
-                    style={{ width: 40, height: 40 }}
+                    className="w-7 h-7 sm:w-10 sm:h-10 rounded-full object-cover shrink-0"
                   />
                 </div>
               </div>
-              <p className="text-[11px] sm:text-xs font-medium text-[#121212]/80 mt-1 hidden xs:block">
+              <p className="text-[10px] sm:text-xs font-medium text-[#121212]/80 mt-0.5 hidden md:block">
                 {t.subtitle(totalCocktailsCount)}
               </p>
             </div>
           </div>
 
           {/* Language Switcher on mobile right */}
-          <div className="flex sm:hidden items-center bg-[#F0F0F0] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] p-0.5">
+          <div className="flex sm:hidden items-center bg-[#F0F0F0] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] p-0.5 shrink-0">
             <button
               type="button"
               onClick={() => onToggleLang('it')}
-              className={`px-2 py-1 text-[10px] font-black uppercase transition-all ${
+              className={`px-1.5 py-0.5 text-[10px] font-black uppercase transition-all ${
                 lang === 'it' ? 'bg-[#121212] text-white' : 'text-[#121212]'
               }`}
             >
@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => onToggleLang('en')}
-              className={`px-2 py-1 text-[10px] font-black uppercase transition-all ${
+              className={`px-1.5 py-0.5 text-[10px] font-black uppercase transition-all ${
                 lang === 'en' ? 'bg-[#121212] text-white' : 'text-[#121212]'
               }`}
             >
