@@ -39,18 +39,16 @@ export const Header: React.FC<HeaderProps> = ({
                   {t.title}
                 </h1>
 
-                {/* Prominent Author Badge: "fatto da" + Large Logo */}
-                <div 
-                  className="flex items-center gap-2 px-2.5 py-1 bg-[#F0F0F0] hover:bg-white border-2 border-[#121212] shadow-[3px_3px_0px_0px_#121212] transition-all select-none"
-                  title="Created by HN"
-                >
-                  <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#121212]">
-                    {t.madeBy}
+                {/* Author: tiny "made by" + 40x40px borderless logo */}
+                <div className="flex items-center gap-1.5 ml-0.5">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-[#121212]/70 lowercase tracking-tight">
+                    made by
                   </span>
                   <img
                     src="/author-logo.png"
                     alt="HN Logo"
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-[#121212] shadow-[1.5px_1.5px_0px_0px_#121212] object-cover"
+                    className="w-10 h-10 rounded-full object-cover"
+                    style={{ width: 40, height: 40 }}
                   />
                 </div>
               </div>

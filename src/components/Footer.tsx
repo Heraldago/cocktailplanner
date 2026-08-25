@@ -56,12 +56,13 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
               <h4 className="text-xl font-black uppercase tracking-tight text-white ml-1">
                 Cocktail Party Planner
               </h4>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white/10 border border-white/30 text-[11px] uppercase font-black text-white ml-1">
-                <span>{lang === 'it' ? 'fatto da' : 'made by'}</span>
+              <div className="flex items-center gap-1.5 ml-2">
+                <span className="text-[11px] text-white/60 lowercase tracking-tight">made by</span>
                 <img
                   src="/author-logo.png"
                   alt="HN Logo"
-                  className="w-6 h-6 rounded-full border border-white inline-block object-cover"
+                  className="w-7 h-7 rounded-full object-cover"
+                  style={{ width: 28, height: 28 }}
                 />
               </div>
             </div>
