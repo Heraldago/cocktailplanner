@@ -5,6 +5,7 @@ import { calculatePartyRequirements } from './utils/partyCalculator';
 import { getCocktailSemiotics, TasteCategory, StrengthCategory } from './utils/semiotics';
 import { Language, TRANSLATIONS } from './i18n/translations';
 import { CountryCode, COUNTRIES, DEFAULT_COUNTRY, formatCurrency } from './utils/countryLocalization';
+import { getLocalizedCocktail } from './utils/cocktailI18n';
 import { Header } from './components/Header';
 import { HeroSearch } from './components/HeroSearch';
 import { CocktailGrid } from './components/CocktailGrid';
@@ -55,6 +56,11 @@ export const App: React.FC = () => {
       COCKTAILS_DATABASE[0]
     );
   }, [selectedCocktailId]);
+
+  // Localized cocktail reference across 6 languages
+  const localizedCocktail = useMemo(() => {
+    return getLocalizedCocktail(selectedCocktail, lang);
+  }, [selectedCocktail, lang]);
 
   // Filtered cocktails list with Bauhaus semiotics
   const filteredCocktails = useMemo(() => {
@@ -235,7 +241,7 @@ export const App: React.FC = () => {
             {/* Left Column (7 cols): Shopping Card & Bottles Calculation */}
             <div className="lg:col-span-7 space-y-6 sm:space-y-8">
               <ShoppingCard
-                cocktail={selectedCocktail}
+                cocktail={localizedCocktail}
                 config={partyConfig}
                 result={partyResult}
                 lang={lang}
@@ -246,17 +252,17 @@ export const App: React.FC = () => {
             {/* Right Column (5 cols): DIY Equipment & Preparation Steps */}
             <div className="lg:col-span-5 space-y-6 sm:space-y-8">
               <PreparationCard
-                cocktailName={selectedCocktail.name}
-                instructions={selectedCocktail.instructions}
+                cocktailName={localizedCocktail.name}
+                instructions={localizedCocktail.instructions}
                 totalGuests={partyConfig.guestsCount}
                 totalDrinks={partyResult.totalDrinks}
                 lang={lang}
               />
 
               <EquipmentCard
-                equipment={selectedCocktail.equipment}
-                technique={selectedCocktail.technique}
-                glass={selectedCocktail.glass}
+                equipment={localizedCocktail.equipment}
+                technique={localizedCocktail.technique}
+                glass={localizedCocktail.glass}
                 lang={lang}
               />
             </div>

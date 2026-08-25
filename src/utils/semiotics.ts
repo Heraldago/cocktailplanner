@@ -1,4 +1,5 @@
 import { Cocktail } from '../types/cocktail';
+import { Language } from '../i18n/translations';
 
 export type TasteCategory = 'all' | 'bitter' | 'sweet-sour' | 'dry';
 export type StrengthCategory = 'all' | 'light' | 'medium' | 'strong';
@@ -12,13 +13,89 @@ export interface CocktailSemiotics {
   color: BauhausColor;
   colorHex: string;
   shapeEmoji: string;
+  tasteLabel: string;
+  strengthLabel: string;
   tasteLabelIt: string;
   tasteLabelEn: string;
   strengthLabelIt: string;
   strengthLabelEn: string;
 }
 
-export function getCocktailSemiotics(cocktail: Cocktail): CocktailSemiotics {
+export function getTasteLabel(taste: 'bitter' | 'sweet-sour' | 'dry', lang: Language = 'en'): string {
+  const map: Record<Language, Record<'bitter' | 'sweet-sour' | 'dry', string>> = {
+    en: {
+      bitter: 'Bitter & Aperitif',
+      'sweet-sour': 'Sweet & Sour / Fresh',
+      dry: 'Dry & Spirit-Forward',
+    },
+    it: {
+      bitter: 'Bitter & Aperitivo',
+      'sweet-sour': 'Dolce & Sour / Fresco',
+      dry: 'Dry & Spirit-Forward',
+    },
+    es: {
+      bitter: 'Bitter & Aperitivo',
+      'sweet-sour': 'Dulce & Sour / Fresco',
+      dry: 'Dry & Seco',
+    },
+    fr: {
+      bitter: 'Bitter & Apéritif',
+      'sweet-sour': 'Sweet & Sour / Fruité',
+      dry: 'Dry & Spiritueux',
+    },
+    pt: {
+      bitter: 'Bitter & Aperitivo',
+      'sweet-sour': 'Doce & Sour / Tropical',
+      dry: 'Seco & Spirit-Forward',
+    },
+    de: {
+      bitter: 'Bitter & Aperitif',
+      'sweet-sour': 'Sweet & Sour / Fruchtig',
+      dry: 'Dry & Intensiv',
+    },
+  };
+
+  return map[lang]?.[taste] || map.en[taste];
+}
+
+export function getStrengthLabel(strength: 'light' | 'medium' | 'strong', lang: Language = 'en'): string {
+  const map: Record<Language, Record<'light' | 'medium' | 'strong', string>> = {
+    en: {
+      light: 'Light (<15% ABV)',
+      medium: 'Medium (15-25% ABV)',
+      strong: 'Strong (>25% ABV)',
+    },
+    it: {
+      light: 'Leggero (<15% ABV)',
+      medium: 'Medio (15-25% ABV)',
+      strong: 'Forte (>25% ABV)',
+    },
+    es: {
+      light: 'Ligero (<15% ABV)',
+      medium: 'Medio (15-25% ABV)',
+      strong: 'Fuerte (>25% ABV)',
+    },
+    fr: {
+      light: 'Léger (<15% ABV)',
+      medium: 'Modéré (15-25% ABV)',
+      strong: 'Fort (>25% ABV)',
+    },
+    pt: {
+      light: 'Leve (<15% ABV)',
+      medium: 'Médio (15-25% ABV)',
+      strong: 'Forte (>25% ABV)',
+    },
+    de: {
+      light: 'Leicht (<15% ABV)',
+      medium: 'Mittel (15-25% ABV)',
+      strong: 'Stark (>25% ABV)',
+    },
+  };
+
+  return map[lang]?.[strength] || map.en[strength];
+}
+
+export function getCocktailSemiotics(cocktail: Cocktail, lang: Language = 'en'): CocktailSemiotics {
   // 1. Determine Strength & Color (based on ABV)
   let strength: 'light' | 'medium' | 'strong' = 'medium';
   let color: BauhausColor = 'blue';
@@ -101,12 +178,12 @@ export function getCocktailSemiotics(cocktail: Cocktail): CocktailSemiotics {
     shapeEmoji = '🔺';
   }
 
-  // Labels
-  const tasteLabelIt = taste === 'bitter' ? 'Bitter & Aperitivo' : taste === 'dry' ? 'Dry & Spirit-Forward' : 'Dolce & Sour / Fresco';
-  const tasteLabelEn = taste === 'bitter' ? 'Bitter & Aperitif' : taste === 'dry' ? 'Dry & Spirit-Forward' : 'Sweet & Sour / Fresh';
-
-  const strengthLabelIt = strength === 'light' ? 'Leggero (<15% ABV)' : strength === 'medium' ? 'Medio (15-25% ABV)' : 'Forte (>25% ABV)';
-  const strengthLabelEn = strength === 'light' ? 'Light (<15% ABV)' : strength === 'medium' ? 'Medium (15-25% ABV)' : 'Strong (>25% ABV)';
+  const tasteLabel = getTasteLabel(taste, lang);
+  const strengthLabel = getStrengthLabel(strength, lang);
+  const tasteLabelIt = getTasteLabel(taste, 'it');
+  const tasteLabelEn = getTasteLabel(taste, 'en');
+  const strengthLabelIt = getStrengthLabel(strength, 'it');
+  const strengthLabelEn = getStrengthLabel(strength, 'en');
 
   return {
     shape,
@@ -115,6 +192,8 @@ export function getCocktailSemiotics(cocktail: Cocktail): CocktailSemiotics {
     color,
     colorHex,
     shapeEmoji,
+    tasteLabel,
+    strengthLabel,
     tasteLabelIt,
     tasteLabelEn,
     strengthLabelIt,

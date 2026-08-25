@@ -69,7 +69,7 @@ export interface Cocktail {
   tagline: string;
   category: 'Aperitivi Italiani' | 'IBA The Unforgettables' | 'IBA Contemporary Classics' | 'IBA New Era Drinks';
   glass: string;
-  technique: 'Build over Ice' | 'Shake & Strain' | 'Stir & Strain' | 'Muddle & Build' | 'Blend';
+  technique: string;
   iceKgPerDrink: number;
   abv: number;
   flavorProfile: string[];
