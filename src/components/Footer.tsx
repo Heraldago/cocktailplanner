@@ -49,13 +49,21 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-8 border-b-2 border-white/20">
           {/* Brand Col */}
           <div className="md:col-span-5 space-y-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="w-4 h-4 rounded-full bg-[#D02020] border border-white" />
               <span className="w-4 h-4 rounded-none bg-[#1040C0] border border-white" />
               <span className="w-4 h-4 bg-[#F0C020] clip-triangle" />
               <h4 className="text-xl font-black uppercase tracking-tight text-white ml-1">
                 Cocktail Party Planner
               </h4>
+              <div className="flex items-center gap-1.5 px-2 py-0.5 bg-white/10 border border-white/30 text-[10px] uppercase font-black text-white ml-1">
+                <span>{lang === 'it' ? 'fatto da' : 'made by'}</span>
+                <img
+                  src="/author-logo.png"
+                  alt="HN Logo"
+                  className="w-4 h-4 rounded-full border border-white inline-block object-cover"
+                />
+              </div>
             </div>
             <p className="text-xs font-medium text-white/80 max-w-sm leading-relaxed">
               {t.credit}

@@ -34,11 +34,24 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-lg sm:text-2xl font-black uppercase tracking-tight text-[#121212] leading-none">
                   {t.title}
                 </h1>
-                <span className="hidden md:inline-block px-1.5 py-0.5 text-[10px] font-black uppercase bg-[#F0C020] border border-[#121212]">
+
+                {/* Author Badge: "fatto da" + author logo */}
+                <div className="flex items-center gap-1.5 px-2 py-0.5 bg-[#F0F0F0] border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212]" title="Created by HN">
+                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#121212]">
+                    {t.madeBy}
+                  </span>
+                  <img
+                    src="/author-logo.png"
+                    alt="HN Logo"
+                    className="w-5 h-5 sm:w-5 sm:h-5 rounded-full border border-[#121212] shadow-sm inline-block object-cover"
+                  />
+                </div>
+
+                <span className="hidden lg:inline-block px-1.5 py-0.5 text-[10px] font-black uppercase bg-[#F0C020] border border-[#121212]">
                   {t.edition}
                 </span>
               </div>

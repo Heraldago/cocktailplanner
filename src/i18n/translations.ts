@@ -8,6 +8,7 @@ export interface Translations {
     brandTierLabel: string;
     standardTier: string;
     premiumTier: string;
+    madeBy: string;
   };
   hero: {
     badge: string;
@@ -151,6 +152,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       brandTierLabel: 'Fascia Brand:',
       standardTier: 'Supermercato',
       premiumTier: 'Enoteca / Premium',
+      madeBy: 'fatto da',
     },
     hero: {
       badge: 'Form Follows Function • Bauhaus Cocktail Engine',
@@ -292,6 +294,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       brandTierLabel: 'Brand Tier:',
       standardTier: 'Supermarket',
       premiumTier: 'Wine Shop / Premium',
+      madeBy: 'made by',
     },
     hero: {
       badge: 'Form Follows Function • Bauhaus Cocktail Engine',
