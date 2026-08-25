@@ -57,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
                 Cocktail Party Planner
               </h4>
               <div className="flex items-center gap-1.5 ml-2">
-                <span className="text-[11px] text-white/60 lowercase tracking-tight">made by</span>
+                <span className="text-[11px] text-white/60 lowercase tracking-tight">by</span>
                 <img
                   src="/author-logo.png"
                   alt="HN Logo"

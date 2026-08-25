@@ -31,10 +31,10 @@ export const Header: React.FC<HeaderProps> = ({
               {t.title}
             </h1>
 
-            {/* Author: tiny "made by" + 40x40px logo strictly inline */}
+            {/* Author: tiny "by" + logo strictly inline */}
             <div className="flex items-center gap-1 shrink-0">
               <span className="text-[9px] sm:text-[11px] font-bold text-[#121212]/70 lowercase tracking-tight">
-                made by
+                by
               </span>
               <img
                 src="/author-logo.png"
