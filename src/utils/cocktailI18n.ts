@@ -1,7 +1,240 @@
-import { Cocktail, EquipmentItem, Instructions } from '../types/cocktail';
+import { Cocktail, EquipmentItem, Ingredient, Instructions } from '../types/cocktail';
 import { Language } from '../i18n/translations';
 
-// 1. Localized Glassware mapping
+// 1. Comprehensive Ingredient Name Dictionary across 6 languages
+const INGREDIENT_TRANSLATIONS: Record<string, Record<Language, string>> = {
+  'prosecco doc extra dry': {
+    en: 'Prosecco DOC Extra Dry',
+    it: 'Prosecco DOC Extra Dry',
+    es: 'Prosecco DOC Extra Dry',
+    fr: 'Prosecco DOC Extra Dry',
+    pt: 'Prosecco DOC Extra Dry',
+    de: 'Prosecco DOC Extra Dry',
+  },
+  'aperol': {
+    en: 'Aperol Aperitivo',
+    it: 'Aperol',
+    es: 'Aperol Aperitivo',
+    fr: 'Aperol',
+    pt: 'Aperol',
+    de: 'Aperol',
+  },
+  'campari bitter': {
+    en: 'Campari Bitter',
+    it: 'Campari Bitter',
+    es: 'Campari Bitter',
+    fr: 'Campari Bitter',
+    pt: 'Campari Bitter',
+    de: 'Campari Bitter',
+  },
+  'gin tanqueray / london dry': {
+    en: 'London Dry Gin (Tanqueray / Beefeater)',
+    it: 'Gin London Dry (Tanqueray / Beefeater)',
+    es: 'Ginebra London Dry (Tanqueray / Beefeater)',
+    fr: 'Gin London Dry (Tanqueray / Beefeater)',
+    pt: 'Gin London Dry (Tanqueray / Beefeater)',
+    de: 'London Dry Gin (Tanqueray / Beefeater)',
+  },
+  'vermouth rosso dolce (torino)': {
+    en: 'Sweet Red Vermouth (Martini Rosso / Carpano)',
+    it: 'Vermouth Rosso Dolce (Martini / Carpano)',
+    es: 'Vermut Rojo Dulce (Martini / Carpano)',
+    fr: 'Vermouth Rouge Doux (Martini / Carpano)',
+    pt: 'Vermute Tinto Doce (Martini / Carpano)',
+    de: 'Roter Wermut (Martini Rosso / Carpano)',
+  },
+  'vermouth dry (secco)': {
+    en: 'Dry Vermouth (Martini Extra Dry / Noilly Prat)',
+    it: 'Vermouth Dry Secco (Martini / Noilly Prat)',
+    es: 'Vermut Seco Dry (Martini / Noilly Prat)',
+    fr: 'Vermouth Sec Dry (Noilly Prat / Dolin)',
+    pt: 'Vermute Seco Dry (Martini / Noilly Prat)',
+    de: 'Trockener Wermut (Noilly Prat / Martini Dry)',
+  },
+  'vodka premium': {
+    en: 'Vodka (Smirnoff / Absolut / Ketel One)',
+    it: 'Vodka (Smirnoff / Absolut / Ketel One)',
+    es: 'Vodka (Smirnoff / Absolut / Ketel One)',
+    fr: 'Vodka (Absolut / Grey Goose / Smirnoff)',
+    pt: 'Vodka (Smirnoff / Absolut / Ketel One)',
+    de: 'Vodka (Smirnoff / Absolut / Ketel One)',
+  },
+  'tequila blanco 100% agave': {
+    en: '100% Agave Blanco Tequila (Espolòn / Jose Cuervo)',
+    it: 'Tequila Blanco 100% Agave (Espolòn / Cuervo)',
+    es: 'Tequila Blanco 100% Agave (Espolòn / Cuervo)',
+    fr: 'Tequila Blanco 100% Agave (Espolòn / Calle 23)',
+    pt: 'Tequila Blanco 100% Agave (Espolòn / Cuervo)',
+    de: '100% Agave Blanco Tequila (Espolòn / Cuervo)',
+  },
+  'triple sec / cointreau': {
+    en: 'Triple Sec / Cointreau Orange Liqueur',
+    it: 'Triple Sec / Cointreau Liquore all\'Arancia',
+    es: 'Triple Sec / Cointreau Licor de Naranja',
+    fr: 'Triple Sec / Cointreau Liqueur d\'Orange',
+    pt: 'Triple Sec / Cointreau Licor de Laranja',
+    de: 'Triple Sec / Cointreau Orangenlikör',
+  },
+  'rum bianco cubano': {
+    en: 'White Rum (Havana Club 3 / Bacardí Carta Blanca)',
+    it: 'Rum Bianco (Havana Club 3 / Bacardi)',
+    es: 'Ron Blanco (Havana Club 3 / Bacardí Carta Blanca)',
+    fr: 'Rhum Blanc (Havana Club 3 / Bacardi)',
+    pt: 'Rum Branco (Havana Club 3 / Bacardi)',
+    de: 'Weißer Rum (Havana Club 3 / Bacardí)',
+  },
+  'dark rum / rum scuro': {
+    en: 'Aged Dark Rum (Appleton / Diplomatico / Havana 7)',
+    it: 'Rum Scuro Invecchiato (Havana 7 / Diplomatico)',
+    es: 'Ron Oscuro Añejo (Havana 7 / Diplomatico)',
+    fr: 'Rhum Vieux Ambré (Havana 7 / Diplomatico)',
+    pt: 'Rum Escuro Envelhecido (Havana 7 / Diplomatico)',
+    de: 'Dunkler gereifter Rum (Havana 7 / Diplomatico)',
+  },
+  'bourbon whiskey americano': {
+    en: 'Kentucky Straight Bourbon Whiskey (Bulleit / Maker\'s Mark)',
+    it: 'Bourbon Whiskey Americano (Bulleit / Maker\'s Mark)',
+    es: 'Bourbon Whiskey Americano (Bulleit / Maker\'s Mark)',
+    fr: 'Whiskey Bourbon Américain (Bulleit / Maker\'s Mark)',
+    pt: 'Bourbon Whiskey Americano (Bulleit / Maker\'s Mark)',
+    de: 'Bourbon Whiskey (Bulleit / Maker\'s Mark / Jim Beam)',
+  },
+  'succo di lime fresco': {
+    en: 'Freshly Squeezed Lime Juice',
+    it: 'Succo di lime fresco filtrato',
+    es: 'Zumo de lima recién exprimido',
+    fr: 'Jus de citron vert frais pressé',
+    pt: 'Suco de limão taiti fresco',
+    de: 'Frisch gepresster Limettensaft',
+  },
+  'succo di limone fresco': {
+    en: 'Freshly Squeezed Lemon Juice',
+    it: 'Succo di limone fresco filtrato',
+    es: 'Zumo de limón recién exprimido',
+    fr: 'Jus de citron jaune frais pressé',
+    pt: 'Suco de limão siciliano fresco',
+    de: 'Frisch gepresster Zitronensaft',
+  },
+  'sciroppo di zucchero 1:1': {
+    en: 'Simple Sugar Syrup (1:1 Ratio)',
+    it: 'Sciroppo di zucchero semplice (1:1)',
+    es: 'Jarabe de azúcar simple (1:1)',
+    fr: 'Sirop de sucre de canne simple (1:1)',
+    pt: 'Xarope simples de açúcar (1:1)',
+    de: 'Einfacher Zuckersirup (1:1)',
+  },
+  'foglie di menta fresca': {
+    en: 'Fresh Mint Sprigs / Leaves',
+    it: 'Foglioline di menta fresca',
+    es: 'Hojas de menta / hierbabuena fresca',
+    fr: 'Feuilles de menthe fraîche',
+    pt: 'Folhas de hortelã fresca',
+    de: 'Frische Minzblätter',
+  },
+  'soda / acqua gassata': {
+    en: 'Club Soda / Sparkling Water',
+    it: 'Soda / Acqua gassata molto frizzante',
+    es: 'Soda / Agua con gas muy fría',
+    fr: 'Eau gazeuse très pétillante / Soda',
+    pt: 'Club Soda / Água com gás bem gelada',
+    de: 'Sodawasser / stark sprudelndes Mineralwasser',
+  },
+  'acqua tonica': {
+    en: 'Crisp Indian Tonic Water',
+    it: 'Acqua Tonica frizzante premium',
+    es: 'Tónica Premium bien fría',
+    fr: 'Eau Tonique pétillante (Tonic Water)',
+    pt: 'Água Tônica de qualidade',
+    de: 'Premium Tonic Water',
+  },
+  'caffe espresso': {
+    en: 'Fresh Hot Espresso Coffee',
+    it: 'Caffè espresso appena estratto',
+    es: 'Café espresso caliente recién hecho',
+    fr: 'Café expresso chaud fraîchement préparé',
+    pt: 'Café espresso quente fresco',
+    de: 'Frisch gebrühter heißer Espresso',
+  },
+  'liquore al caffe': {
+    en: 'Coffee Liqueur (Kahlúa / Mr Black / Borghetti)',
+    it: 'Liquore al Caffè (Kahlúa / Borghetti)',
+    es: 'Licor de Café (Kahlúa / Borghetti)',
+    fr: 'Liqueur de Café (Kahlúa / Borghetti)',
+    pt: 'Licor de Café (Kahlúa / Borghetti)',
+    de: 'Kaffeelikör (Kahlúa / Tia Maria)',
+  },
+  'angostura': {
+    en: 'Angostura Aromatic Bitters',
+    it: 'Angostura Aromatic Bitters',
+    es: 'Amargo de Angostura',
+    fr: 'Angostura Bitters',
+    pt: 'Angostura Bitters',
+    de: 'Angostura Bitters',
+  },
+  'fetta di arancia': {
+    en: 'Fresh Orange Slice or Wedge',
+    it: 'Fetta o spicchio di arancia fresca',
+    es: 'Rodaja o gajo de naranja fresca',
+    fr: 'Tranche ou quartier d\'orange fraîche',
+    pt: 'Fatia ou rodela de laranja fresca',
+    de: 'Frische Orangenscheibe oder Spalte',
+  },
+  'fetta di lime': {
+    en: 'Fresh Lime Wheel or Wedge',
+    it: 'Fetta o spicchio di lime fresco',
+    es: 'Rodaja o gajo de lima fresca',
+    fr: 'Rondelle ou quartier de citron vert frais',
+    pt: 'Rodela ou gomo de limão taiti',
+    de: 'Frische Limettenscheibe oder Spalte',
+  },
+  'oliva verde': {
+    en: 'Green Cocktail Olive (Castelvetrano)',
+    it: 'Oliva verde da cocktail',
+    es: 'Aceituna verde de cóctel',
+    fr: 'Olive verte à cocktail',
+    pt: 'Azeitona verde de coquetel',
+    de: 'Grüne Cocktail-Olive',
+  },
+};
+
+export function getLocalizedIngredientName(name: string, lang: Language): string {
+  if (lang === 'it') return name;
+
+  const lower = name.toLowerCase();
+
+  for (const [key, trans] of Object.entries(INGREDIENT_TRANSLATIONS)) {
+    if (lower.includes(key)) {
+      return trans[lang] || trans.en;
+    }
+  }
+
+  // Fallbacks for general categories
+  if (lower.includes('prosecco') || lower.includes('spumante')) {
+    return lang === 'en' ? 'Prosecco DOC Sparkling Wine' : lang === 'es' ? 'Vino Espumoso Prosecco DOC' : lang === 'fr' ? 'Vin Effervescent Prosecco DOC' : lang === 'pt' ? 'Espumante Prosecco DOC' : lang === 'de' ? 'Prosecco DOC Schaumwein' : name;
+  }
+  if (lower.includes('lime')) {
+    return lang === 'en' ? 'Fresh Lime' : lang === 'es' ? 'Lima Fresca' : lang === 'fr' ? 'Citron Vert Frais' : lang === 'pt' ? 'Limão Taiti Fresco' : lang === 'de' ? 'Frische Limette' : name;
+  }
+  if (lower.includes('limone')) {
+    return lang === 'en' ? 'Fresh Lemon' : lang === 'es' ? 'Limón Fresco' : lang === 'fr' ? 'Citron Jaune Frais' : lang === 'pt' ? 'Limão Siciliano' : lang === 'de' ? 'Frische Zitrone' : name;
+  }
+  if (lower.includes('menta')) {
+    return lang === 'en' ? 'Fresh Mint Leaves' : lang === 'es' ? 'Hojas de Menta' : lang === 'fr' ? 'Menthe Fraîche' : lang === 'pt' ? 'Hortelã Fresca' : lang === 'de' ? 'Frische Minze' : name;
+  }
+  if (lower.includes('zucchero')) {
+    return lang === 'en' ? 'Sugar Syrup / Sugar' : lang === 'es' ? 'Jarabe de Azúcar' : lang === 'fr' ? 'Sirop de Sucre' : lang === 'pt' ? 'Açúcar / Xarope' : lang === 'de' ? 'Zucker / Sirup' : name;
+  }
+  if (lower.includes('soda') || lower.includes('seltz')) {
+    return lang === 'en' ? 'Club Soda / Seltzer' : lang === 'es' ? 'Agua con Gas / Soda' : lang === 'fr' ? 'Eau Gazeuse / Soda' : lang === 'pt' ? 'Club Soda' : lang === 'de' ? 'Sodawasser' : name;
+  }
+  if (lower.includes('tonica')) {
+    return lang === 'en' ? 'Tonic Water' : lang === 'es' ? 'Agua Tónica' : lang === 'fr' ? 'Tonic' : lang === 'pt' ? 'Água Tônica' : lang === 'de' ? 'Tonic Water' : name;
+  }
+
+  return name;
+}
+
+// 2. Localized Glassware mapping
 export function getLocalizedGlass(glassName: string, lang: Language): string {
   const lower = glassName.toLowerCase();
   
@@ -92,7 +325,7 @@ export function getLocalizedGlass(glassName: string, lang: Language): string {
   return glassName;
 }
 
-// 2. Localized Bar Techniques
+// 3. Localized Bar Techniques
 export function getLocalizedTechnique(technique: string, lang: Language): string {
   const lower = technique.toLowerCase();
 
@@ -159,7 +392,7 @@ export function getLocalizedTechnique(technique: string, lang: Language): string
   return technique;
 }
 
-// 3. Localized Equipment & DIY Hacks
+// 4. Localized Equipment & DIY Hacks
 export function getLocalizedEquipment(equipmentList: EquipmentItem[], lang: Language): EquipmentItem[] {
   return equipmentList.map((eq) => {
     const lowerTool = eq.tool.toLowerCase();
@@ -216,7 +449,7 @@ export function getLocalizedEquipment(equipmentList: EquipmentItem[], lang: Lang
       const purposeMap: Record<Language, string> = {
         en: 'Guarantees the perfect balance between sweet, sour, bitter and spirit strength.',
         it: 'Garantisce il bilanciamento perfetto tra dolce, acido, amaro e distillati.',
-        es: 'Garantiza el equilibrio perfecto entre dulce, ácido, amargo y alcohol.',
+        es: 'Garantiza el equilibrio perfetto entre dulce, ácido, amargo y alcohol.',
         fr: 'Garantit l\'équilibre parfait entre le sucré, l\'acide, l\'amer et les spiritueux.',
         pt: 'Garante o equilíbrio perfeito entre doce, cítrico, amargo e alcoólico.',
         de: 'Garantiert die perfekte Balance zwischen süß, sauer, bitter und Spirituose.',
@@ -319,7 +552,7 @@ export function getLocalizedEquipment(equipmentList: EquipmentItem[], lang: Lang
   });
 }
 
-// 4. Localized Dynamic Taglines
+// 5. Localized Dynamic Taglines
 export function getLocalizedTagline(cocktail: Cocktail, lang: Language): string {
   if (lang === 'it') return cocktail.tagline;
 
@@ -383,65 +616,72 @@ export function getLocalizedTagline(cocktail: Cocktail, lang: Language): string 
   return cocktail.tagline;
 }
 
-// 5. Localized Instructions
+// 6. Localized Step-by-Step Instructions
 export function getLocalizedInstructions(instructions: Instructions, lang: Language): Instructions {
   if (lang === 'it') return instructions;
 
-  const singleMap: Record<Language, (steps: string[]) => string[]> = {
-    it: (steps) => steps,
-    en: (steps) => steps.map((s) => {
-      let text = s;
-      text = text.replace(/Riempi.*ghiaccio/i, 'Fill glass or shaker with fresh solid ice cubes.');
-      text = text.replace(/Versa tutti gli ingredienti/i, 'Pour all measured spirits and ingredients.');
-      text = text.replace(/Mescola.*secondi/i, 'Stir gently for 15-20 seconds to achieve optimal chilling and dilution.');
-      text = text.replace(/Shakera energicamente/i, 'Shake vigorously for 10-12 seconds until frosty cold.');
-      text = text.replace(/Filtra.*bicchiere/i, 'Strain into chilled serving glass over fresh ice or up.');
-      text = text.replace(/Guarnisci con/i, 'Garnish with');
-      return text;
-    }),
-    es: (steps) => steps.map((s) => {
-      let text = s;
-      text = text.replace(/Riempi.*ghiaccio/i, 'Llenar el vaso o coctelera con cubitos de hielo fresco.');
-      text = text.replace(/Versa tutti gli ingredienti/i, 'Verter todos los ingredientes medidos.');
-      text = text.replace(/Mescola.*secondi/i, 'Remover suavemente durante 15-20 segundos.');
-      text = text.replace(/Shakera energicamente/i, 'Agitar enérgicamente durante 10-12 segundos.');
-      text = text.replace(/Filtra.*bicchiere/i, 'Colar en la copa fría con hielo fresco.');
-      text = text.replace(/Guarnisci con/i, 'Decorar con');
-      return text;
-    }),
-    fr: (steps) => steps.map((s) => {
-      let text = s;
-      text = text.replace(/Riempi.*ghiaccio/i, 'Remplir le verre ou le shaker de glaçons frais.');
-      text = text.replace(/Versa tutti gli ingredienti/i, 'Verser tous les ingrédients dosés.');
-      text = text.replace(/Mescola.*secondi/i, 'Mélanger délicatement pendant 15-20 secondes.');
-      text = text.replace(/Shakera energicamente/i, 'Frapper vigoureusement au shaker pendant 10-12 secondes.');
-      text = text.replace(/Filtra.*bicchiere/i, 'Filtrer dans le verre de service rafraîchi.');
-      text = text.replace(/Guarnisci con/i, 'Garnir avec');
-      return text;
-    }),
-    pt: (steps) => steps.map((s) => {
-      let text = s;
-      text = text.replace(/Riempi.*ghiaccio/i, 'Encha o copo ou coqueteleira com cubos de gelo fresco.');
-      text = text.replace(/Versa tutti gli ingredienti/i, 'Despeje todos os ingredientes dosados.');
-      text = text.replace(/Mescola.*secondi/i, 'Mexa suavemente por 15-20 segundos.');
-      text = text.replace(/Shakera energicamente/i, 'Bata vigorosamente na coqueteleira por 10-12 segundos.');
-      text = text.replace(/Filtra.*bicchiere/i, 'Coe na taça resfriada com gelo novo.');
-      text = text.replace(/Guarnisci con/i, 'Guarneça com');
-      return text;
-    }),
-    de: (steps) => steps.map((s) => {
-      let text = s;
-      text = text.replace(/Riempi.*ghiaccio/i, 'Glas oder Shaker mit frischen Eiswürfeln füllen.');
-      text = text.replace(/Versa tutti gli ingredienti/i, 'Alle abgemessenen Zutaten eingießen.');
-      text = text.replace(/Mescola.*secondi/i, '15-20 Sekunden sanft kalt rühren.');
-      text = text.replace(/Shakera energicamente/i, '10-12 Sekunden kräftig auf Eis schütteln.');
-      text = text.replace(/Filtra.*bicchiere/i, 'In das gekühlte Glas auf frisches Eis abseihen.');
-      text = text.replace(/Guarnisci con/i, 'Garnieren mit');
-      return text;
-    }),
+  const translateStep = (s: string, l: Language): string => {
+    let t = s;
+    if (l === 'en') {
+      t = t.replace(/Riempi.*ghiaccio.*/i, 'Fill the serving glass or shaker generously with solid ice cubes.');
+      t = t.replace(/Versa prima.*Prosecco.*/i, 'Pour chilled Prosecco first into the glass.');
+      t = t.replace(/Versa tutti gli ingredienti.*/i, 'Pour all measured spirits and ingredients into the mixing glass or shaker.');
+      t = t.replace(/Aggiungi.*Aperol.*/i, 'Add Aperol with a circular pour over the ice.');
+      t = t.replace(/Completa con.*soda.*/i, 'Top off with a splash of chilled club soda.');
+      t = t.replace(/Mescola.*secondi.*/i, 'Stir gently for 15-20 seconds to achieve optimal chilling and dilution.');
+      t = t.replace(/Dai una sola mescolata.*/i, 'Stir gently once from bottom to top to preserve carbonation.');
+      t = t.replace(/Shakera energicamente.*/i, 'Shake vigorously with ice for 10-12 seconds until the shaker is frosty.');
+      t = t.replace(/Filtra.*bicchiere.*/i, 'Strain into the chilled glass over fresh ice or straight up.');
+      t = t.replace(/Guarnisci con.*/i, 'Garnish with a fresh citrus wheel, olive, or mint sprig.');
+    } else if (l === 'es') {
+      t = t.replace(/Riempi.*ghiaccio.*/i, 'Llenar el vaso o coctelera con abundante hielo macizo.');
+      t = t.replace(/Versa prima.*Prosecco.*/i, 'Verter primero el Prosecco frío en la copa.');
+      t = t.replace(/Versa tutti gli ingredienti.*/i, 'Verter todos los ingredientes medidos en el vaso mezclador.');
+      t = t.replace(/Aggiungi.*Aperol.*/i, 'Añadir Aperol con un movimiento circular sobre el hielo.');
+      t = t.replace(/Completa con.*soda.*/i, 'Completar con un toque de soda muy fría.');
+      t = t.replace(/Mescola.*secondi.*/i, 'Remover suavemente durante 15-20 segundos.');
+      t = t.replace(/Dai una sola mescolata.*/i, 'Remover suavemente una sola vez de abajo hacia arriba.');
+      t = t.replace(/Shakera energicamente.*/i, 'Agitar enérgicamente con hielo durante 10-12 segundos.');
+      t = t.replace(/Filtra.*bicchiere.*/i, 'Colar en la copa fría con hielo fresco.');
+      t = t.replace(/Guarnisci con.*/i, 'Decorar con una rodaja de cítrico fresco o aceituna.');
+    } else if (l === 'fr') {
+      t = t.replace(/Riempi.*ghiaccio.*/i, 'Remplir le verre ou le shaker de glaçons pleins.');
+      t = t.replace(/Versa prima.*Prosecco.*/i, 'Verser d\'abord le Prosecco bien frais dans le verre.');
+      t = t.replace(/Versa tutti gli ingredienti.*/i, 'Verser tous les ingrédients dosés dans le shaker ou verre à mélange.');
+      t = t.replace(/Aggiungi.*Aperol.*/i, 'Ajouter l\'Aperol en mouvement circulaire.');
+      t = t.replace(/Completa con.*soda.*/i, 'Compléter avec un trait d\'eau gazeuse bien fraîche.');
+      t = t.replace(/Mescola.*secondi.*/i, 'Mélanger délicatement pendant 15-20 secondes.');
+      t = t.replace(/Dai una sola mescolata.*/i, 'Mélanger délicatement de bas en haut pour préserver les bulles.');
+      t = t.replace(/Shakera energicamente.*/i, 'Frapper vigoureusement au shaker pendant 10-12 secondes.');
+      t = t.replace(/Filtra.*bicchiere.*/i, 'Filtrer dans le verre rafraîchi avec des glaçons neufs.');
+      t = t.replace(/Guarnisci con.*/i, 'Garnir d\'une tranche d\'agrume frais ou d\'une olive.');
+    } else if (l === 'pt') {
+      t = t.replace(/Riempi.*ghiaccio.*/i, 'Encha o copo ou coqueteleira com bastante gelo maciço.');
+      t = t.replace(/Versa prima.*Prosecco.*/i, 'Despeje primeiro o Prosecco gelado na taça.');
+      t = t.replace(/Versa tutti gli ingredienti.*/i, 'Despeje todos os ingredientes dosados.');
+      t = t.replace(/Aggiungi.*Aperol.*/i, 'Adicione o Aperol em movimento circular.');
+      t = t.replace(/Completa con.*soda.*/i, 'Complete com um toque de Club Soda gelado.');
+      t = t.replace(/Mescola.*secondi.*/i, 'Mexa suavemente por 15-20 segundos.');
+      t = t.replace(/Dai una sola mescolata.*/i, 'Mexa delicadamente de baixo para cima para manter as bolhas.');
+      t = t.replace(/Shakera energicamente.*/i, 'Bata vigorosamente na coqueteleira com gelo por 10-12 segundos.');
+      t = t.replace(/Filtra.*bicchiere.*/i, 'Coe na taça resfriada com gelo novo.');
+      t = t.replace(/Guarnisci con.*/i, 'Guarneça com uma fatia de fruta fresca ou azeitona.');
+    } else if (l === 'de') {
+      t = t.replace(/Riempi.*ghiaccio.*/i, 'Glas oder Shaker großzügig mit soliden Eiswürfeln füllen.');
+      t = t.replace(/Versa prima.*Prosecco.*/i, 'Zuerst den gut gekühlten Prosecco ins Glas gießen.');
+      t = t.replace(/Versa tutti gli ingredienti.*/i, 'Alle abgemessenen Zutaten in das Rührglas oder den Shaker geben.');
+      t = t.replace(/Aggiungi.*Aperol.*/i, 'Aperol in kreisender Bewegung über das Eis gießen.');
+      t = t.replace(/Completa con.*soda.*/i, 'Mit einem Spritzer kaltem Sodawasser auffüllen.');
+      t = t.replace(/Mescola.*secondi.*/i, '15-20 Sekunden sanft kalt rühren.');
+      t = t.replace(/Dai una sola mescolata.*/i, 'Nur einmal vorsichtig von unten nach oben rühren, um die Kohlensäure zu schonen.');
+      t = t.replace(/Shakera energicamente.*/i, '10-12 Sekunden kräftig auf Eis schütteln.');
+      t = t.replace(/Filtra.*bicchiere.*/i, 'In das gekühlte Glas auf frisches Eis abseihen.');
+      t = t.replace(/Guarnisci con.*/i, 'Mit frischer Zitrusscheibe oder Olive garnieren.');
+    }
+    return t;
   };
 
-  const translatedSingle = singleMap[lang] ? singleMap[lang](instructions.single) : instructions.single;
+  const translatedSingle = instructions.single.map((s) => translateStep(s, lang));
 
   const dilutionTipMap: Record<Language, string> = {
     en: 'Add ~15% cold filtered water to the batch pitcher to replicate the chilling dilution of melting ice, ensuring smooth drinkability.',
@@ -471,13 +711,18 @@ export function getLocalizedInstructions(instructions: Instructions, lang: Langu
   };
 }
 
-// 6. Full Cocktail Localizer
+// 7. Full Cocktail Localizer (Ingredients, Glassware, Techniques, Equipment, Tagline, Instructions)
 export function getLocalizedCocktail(cocktail: Cocktail, lang: Language): Cocktail {
   const glass = getLocalizedGlass(cocktail.glass, lang);
   const technique = getLocalizedTechnique(cocktail.technique, lang);
   const equipment = getLocalizedEquipment(cocktail.equipment, lang);
   const tagline = getLocalizedTagline(cocktail, lang);
   const instructions = getLocalizedInstructions(cocktail.instructions, lang);
+
+  const ingredients: Ingredient[] = cocktail.ingredients.map((ing) => ({
+    ...ing,
+    name: getLocalizedIngredientName(ing.name, lang),
+  }));
 
   return {
     ...cocktail,
@@ -486,5 +731,6 @@ export function getLocalizedCocktail(cocktail: Cocktail, lang: Language): Cockta
     equipment,
     tagline,
     instructions,
+    ingredients,
   };
 }
