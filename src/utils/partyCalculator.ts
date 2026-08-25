@@ -1,5 +1,6 @@
 import { Cocktail, PartyConfig, PartyCalculationResult, CalculatedIngredient, Ingredient, BrandTier, PartyIntensity } from '../types/cocktail';
 import { Language } from '../i18n/translations';
+import { CountryConfig, formatCurrency, COUNTRIES } from './countryLocalization';
 
 export const INTENSITY_DRINKS_MAP: Record<PartyIntensity, { label: string; drinks: number; description: string; emoji: string }> = {
   aperitivo: {
@@ -35,7 +36,7 @@ export const INTENSITY_DRINKS_MAP: Record<PartyIntensity, { label: string; drink
 };
 
 /**
- * Heuristic pricing for Italian supermarket & wine shop retail market (€)
+ * Base EUR pricing heuristics
  */
 function getEstimatedUnitPrice(ing: Ingredient, tier: BrandTier): number {
   if (ing.estimatedPrice) {
@@ -101,9 +102,9 @@ function getEstimatedUnitPrice(ing: Ingredient, tier: BrandTier): number {
       return tier === 'premium' ? 20.0 : 8.5;
     case 'mixer':
       if (ing.bottleSizeMl <= 250) {
-        return tier === 'premium' ? 1.8 : 1.1; // Bottiglietta singola 200ml
+        return tier === 'premium' ? 1.8 : 1.1;
       }
-      return tier === 'premium' ? 4.5 : 2.0; // Bottiglia da 1000ml o succo
+      return tier === 'premium' ? 4.5 : 2.0;
     case 'coffee':
       return tier === 'premium' ? 3.0 : 1.5;
     case 'syrup':
@@ -118,7 +119,10 @@ function getEstimatedUnitPrice(ing: Ingredient, tier: BrandTier): number {
   }
 }
 
-export function calculatePartyRequirements(cocktail: Cocktail, config: PartyConfig): PartyCalculationResult {
+export function calculatePartyRequirements(
+  cocktail: Cocktail,
+  config: PartyConfig
+): PartyCalculationResult {
   const drinksPerPerson = config.drinksPerPerson !== undefined
     ? config.drinksPerPerson
     : (INTENSITY_DRINKS_MAP[config.intensity]?.drinks || 2);
@@ -131,7 +135,7 @@ export function calculatePartyRequirements(cocktail: Cocktail, config: PartyConf
   const iceTotalCost = Number((iceBags2Kg * iceBagUnitPrice).toFixed(2));
 
   let totalShoppingCost = iceTotalCost;
-  let effectiveCostTotal = (totalIceKg * (iceBagUnitPrice / 2.0)); // Ice consumed cost
+  let effectiveCostTotal = (totalIceKg * (iceBagUnitPrice / 2.0));
 
   const calculatedIngredients: CalculatedIngredient[] = cocktail.ingredients.map((ing) => {
     const totalMl = ing.mlPerDrink > 0 ? ing.mlPerDrink * totalDrinks : 0;
@@ -157,7 +161,6 @@ export function calculatePartyRequirements(cocktail: Cocktail, config: PartyConf
     const unitPrice = getEstimatedUnitPrice(ing, config.brandTier);
     const totalCost = Number((bottlesNeeded * unitPrice).toFixed(2));
     
-    // Effective cost: only the portion used (crucial for expensive bitters/spirits)
     let effectiveCost = totalCost;
     if (ing.categoryType === 'bitters') {
       effectiveCost = Number((totalDrinks * 0.15).toFixed(2));
@@ -201,12 +204,11 @@ export function calculatePartyRequirements(cocktail: Cocktail, config: PartyConf
   const costPerPerson = Number((totalShoppingCost / config.guestsCount).toFixed(2));
   const effectiveCostPerDrink = totalDrinks > 0 ? Number((effectiveCostTotal / totalDrinks).toFixed(2)) : 0;
 
-  // Typical cocktail bar in Italy: €9.00 (Standard) to €13.00 (Premium cocktail bar)
   const averageBarDrinkPrice = config.brandTier === 'premium' ? 12.0 : 9.0;
   const barTotalEstimatedCost = totalDrinks * averageBarDrinkPrice;
   const barSavingsEstimate = Math.max(0, Number((barTotalEstimatedCost - totalShoppingCost).toFixed(2)));
 
-  const servingsSummary = `${config.guestsCount} ${config.guestsCount === 1 ? 'invitato' : 'invitati'} × ${drinksPerPerson} drink = ${totalDrinks} drink totali`;
+  const servingsSummary = `${config.guestsCount} guests × ${drinksPerPerson} drinks = ${totalDrinks} total drinks`;
 
   return {
     totalDrinks,
@@ -229,95 +231,95 @@ export function generateShoppingListText(
   cocktail: Cocktail,
   config: PartyConfig,
   result: PartyCalculationResult,
-  lang: Language = 'it'
+  lang: Language = 'en',
+  countryConfig?: CountryConfig
 ): string {
-  if (lang === 'en') {
-    let text = `🍹 COCKTAIL PARTY PLANNER - SHOPPING LIST & BUDGET\n`;
+  const country = countryConfig || COUNTRIES.US;
+
+  const format = (eurAmount: number) => formatCurrency(eurAmount, country);
+
+  if (lang === 'it') {
+    let text = `🍹 COCKTAIL PARTY PLANNER - LISTA SPESA & BUDGET (${country.flag} ${country.nameLocal})\n`;
     text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
     text += `Cocktail: ${cocktail.name.toUpperCase()}\n`;
-    text += `Guests: ${config.guestsCount} guests (${result.totalDrinks} total drinks)\n`;
-    text += `Drinks per Guest: ${result.drinksPerPerson} drink/guest\n`;
-    text += `Brand Tier: ${config.brandTier === 'premium' ? 'PREMIUM (Wine Shop)' : 'STANDARD (Supermarket)'}\n\n`;
+    text += `Invitati: ${config.guestsCount} persone (${result.totalDrinks} drink totali)\n`;
+    text += `Livello: ${result.drinksPerPerson} drink a testa\n`;
+    text += `Fascia Brand: ${config.brandTier === 'premium' ? 'PREMIUM (Enoteca)' : 'STANDARD (Supermercato)'}\n\n`;
 
-    text += `💰 ESTIMATED BUDGET & SPLIT:\n`;
-    text += `• Total at checkout: ~€ ${result.totalShoppingCost.toFixed(2)}\n`;
-    text += `• Cost per guest: ~€ ${result.costPerPerson.toFixed(2)} / guest\n`;
-    text += `• Real cost per drink: ~€ ${result.effectiveCostPerDrink.toFixed(2)} / drink\n`;
-    text += `• Estimated bar savings: ~€ ${result.barSavingsEstimate.toFixed(2)} 🎉\n\n`;
+    text += `💰 STIMA SPESA & QUOTA:\n`;
+    text += `• Totale spesa alla cassa: ~${format(result.totalShoppingCost)}\n`;
+    text += `• Quota a persona: ~${format(result.costPerPerson)} / invitato\n`;
+    text += `• Costo reale per drink: ~${format(result.effectiveCostPerDrink)} / bicchiere\n`;
+    text += `• Risparmio stimato vs Bar: ~${format(result.barSavingsEstimate)} 🎉\n\n`;
 
-    text += `🛒 BOTTLES & INGREDIENTS TO BUY:\n`;
+    text += `🛒 BOTTIGLIE E INGREDIENTI DA ACQUISTARE:\n`;
     result.ingredients.forEach((ing, index) => {
       if (ing.totalPieces > 0) {
-        text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded} pack(s) (${ing.totalPieces} pcs) (~€ ${ing.totalCost.toFixed(2)})\n`;
-        text += `   👉 Recommended: ${ing.recommendedBrand}\n`;
+        text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded} conf. (${ing.totalPieces} pz) (~${format(ing.totalCost)})\n`;
+        text += `   👉 Consigliato: ${ing.recommendedBrand}\n`;
       } else if (ing.totalMl > 0) {
         const cl = (ing.totalMl / 10).toFixed(0);
-        text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded}x ${ing.bottleSizeMl}ml bottles (~€ ${ing.totalCost.toFixed(2)}) [Needed: ${ing.totalMl}ml / ${cl}cl]\n`;
-        text += `   👉 Recommended brand: ${ing.recommendedBrand}\n`;
+        text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded}x da ${ing.bottleSizeMl}ml (~${format(ing.totalCost)}) [Serve: ${ing.totalMl}ml / ${cl}cl]\n`;
+        text += `   👉 Brand consigliato: ${ing.recommendedBrand}\n`;
         if (ing.leftoverMl > 0) {
-          text += `   ℹ️ Leftover ~${ing.leftoverMl}ml (${ing.leftoverPercentage}% of bottle)\n`;
+          text += `   ℹ️ Avanzeranno ~${ing.leftoverMl}ml (${ing.leftoverPercentage}% della bottiglia)\n`;
         }
       } else {
-        text += `${index + 1}. [ ] ${ing.name}: 1 pack (~€ ${ing.totalCost.toFixed(2)})\n`;
-        text += `   👉 Recommended: ${ing.recommendedBrand}\n`;
+        text += `${index + 1}. [ ] ${ing.name}: 1 confezione (~${format(ing.totalCost)})\n`;
+        text += `   👉 Consigliato: ${ing.recommendedBrand}\n`;
       }
     });
 
-    text += `\n🧊 ICE:\n`;
-    text += `• [ ] ${result.iceBags2Kg} bags of 2kg ice (~€ ${result.iceTotalCost.toFixed(2)}) [Needed: ~${result.totalIceKg} kg]\n`;
+    text += `\n🧊 GHIACCIO:\n`;
+    text += `• [ ] ${result.iceBags2Kg} sacchetti da 2kg (~${format(result.iceTotalCost)}) [Fabbisogno: ~${result.totalIceKg} kg]\n`;
 
-    text += `\n🍸 TOOLS & DIY HACKS:\n`;
-    cocktail.equipment.forEach((eq) => {
-      text += `• ${eq.tool} -> Kitchen DIY: ${eq.diyAlternative}\n`;
-    });
+    text += `\n🏪 Supermercati consigliati: ${country.supermarkets.slice(0, 4).join(', ')}\n`;
 
     text += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    text += `Created with Cocktail Party Planner | Bauhaus Edition`;
+    text += `Generato con Cocktail Party Planner | cocktailplanner.vercel.app`;
 
     return text;
   }
 
-  let text = `🍹 COCKTAIL PARTY PLANNER - LISTA SPESA & BUDGET\n`;
+  // Default English / International
+  let text = `🍹 COCKTAIL PARTY PLANNER - SHOPPING LIST & BUDGET (${country.flag} ${country.nameEn})\n`;
   text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   text += `Cocktail: ${cocktail.name.toUpperCase()}\n`;
-  text += `Invitati: ${config.guestsCount} persone (${result.servingsSummary})\n`;
-  text += `Livello: ${result.drinksPerPerson} drink a testa\n`;
-  text += `Fascia Brand: ${config.brandTier === 'premium' ? 'PREMIUM (Enoteca)' : 'STANDARD (Supermercato)'}\n\n`;
+  text += `Guests: ${config.guestsCount} guests (${result.totalDrinks} total drinks)\n`;
+  text += `Drinks per Guest: ${result.drinksPerPerson} drink/guest\n`;
+  text += `Brand Tier: ${config.brandTier === 'premium' ? 'PREMIUM (Wine Shop)' : 'STANDARD (Supermarket)'}\n\n`;
 
-  text += `💰 STIMA SPESA & QUOTA:\n`;
-  text += `• Totale spesa alla cassa: ~€ ${result.totalShoppingCost.toFixed(2)}\n`;
-  text += `• Quota a persona: ~€ ${result.costPerPerson.toFixed(2)} / invitato\n`;
-  text += `• Costo reale per drink: ~€ ${result.effectiveCostPerDrink.toFixed(2)} / bicchiere\n`;
-  text += `• Risparmio stimato vs Cocktail Bar: ~€ ${result.barSavingsEstimate.toFixed(2)} 🎉\n\n`;
+  text += `💰 ESTIMATED BUDGET & SPLIT:\n`;
+  text += `• Total at checkout: ~${format(result.totalShoppingCost)}\n`;
+  text += `• Cost per guest: ~${format(result.costPerPerson)} / guest\n`;
+  text += `• Real cost per drink: ~${format(result.effectiveCostPerDrink)} / drink\n`;
+  text += `• Estimated bar savings: ~${format(result.barSavingsEstimate)} 🎉\n\n`;
 
-  text += `🛒 BOTTIGLIE E INGREDIENTI DA ACQUISTARE:\n`;
+  text += `🛒 BOTTLES & INGREDIENTS TO BUY:\n`;
   result.ingredients.forEach((ing, index) => {
     if (ing.totalPieces > 0) {
-      text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded} conf. (${ing.totalPieces} pz) (~€ ${ing.totalCost.toFixed(2)})\n`;
-      text += `   👉 Consigliato: ${ing.recommendedBrand}\n`;
+      text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded} pack(s) (${ing.totalPieces} pcs) (~${format(ing.totalCost)})\n`;
+      text += `   👉 Recommended: ${ing.recommendedBrand}\n`;
     } else if (ing.totalMl > 0) {
       const cl = (ing.totalMl / 10).toFixed(0);
-      text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded}x da ${ing.bottleSizeMl}ml (~€ ${ing.totalCost.toFixed(2)}) [Serve: ${ing.totalMl}ml / ${cl}cl]\n`;
-      text += `   👉 Brand consigliato: ${ing.recommendedBrand}\n`;
+      text += `${index + 1}. [ ] ${ing.name}: ${ing.bottlesNeeded}x ${ing.bottleSizeMl}ml bottles (~${format(ing.totalCost)}) [Needed: ${ing.totalMl}ml / ${cl}cl]\n`;
+      text += `   👉 Recommended brand: ${ing.recommendedBrand}\n`;
       if (ing.leftoverMl > 0) {
-        text += `   ℹ️ Avanzeranno ~${ing.leftoverMl}ml (${ing.leftoverPercentage}% della bottiglia)\n`;
+        text += `   ℹ️ Leftover ~${ing.leftoverMl}ml (${ing.leftoverPercentage}% of bottle)\n`;
       }
     } else {
-      text += `${index + 1}. [ ] ${ing.name}: 1 confezione (~€ ${ing.totalCost.toFixed(2)})\n`;
-      text += `   👉 Consigliato: ${ing.recommendedBrand}\n`;
+      text += `${index + 1}. [ ] ${ing.name}: 1 pack (~${format(ing.totalCost)})\n`;
+      text += `   👉 Recommended: ${ing.recommendedBrand}\n`;
     }
   });
 
-  text += `\n🧊 GHIACCIO:\n`;
-  text += `• [ ] ${result.iceBags2Kg} sacchetti da 2kg (~€ ${result.iceTotalCost.toFixed(2)}) [Fabbisogno: ~${result.totalIceKg} kg]\n`;
+  text += `\n🧊 ICE:\n`;
+  text += `• [ ] ${result.iceBags2Kg} bags of 2kg ice (~${format(result.iceTotalCost)}) [Needed: ~${result.totalIceKg} kg]\n`;
 
-  text += `\n🍸 UTENSILI & DIY:\n`;
-  cocktail.equipment.forEach((eq) => {
-    text += `• ${eq.tool} -> Fai da te: ${eq.diyAlternative}\n`;
-  });
+  text += `\n🏪 Recommended local stores: ${country.supermarkets.slice(0, 4).join(', ')}\n`;
 
   text += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-  text += `Generato con Cocktail Party Planner | Bauhaus Edition`;
+  text += `Created with Cocktail Party Planner | cocktailplanner.vercel.app`;
 
   return text;
 }

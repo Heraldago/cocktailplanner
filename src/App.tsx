@@ -4,6 +4,7 @@ import { Cocktail, BrandTier, PartyIntensity } from './types/cocktail';
 import { calculatePartyRequirements } from './utils/partyCalculator';
 import { getCocktailSemiotics, TasteCategory, StrengthCategory } from './utils/semiotics';
 import { Language, TRANSLATIONS } from './i18n/translations';
+import { CountryCode, COUNTRIES, DEFAULT_COUNTRY, formatCurrency } from './utils/countryLocalization';
 import { Header } from './components/Header';
 import { HeroSearch } from './components/HeroSearch';
 import { CocktailGrid } from './components/CocktailGrid';
@@ -15,8 +16,9 @@ import { Footer } from './components/Footer';
 import { ArrowDown, ArrowUp, GlassWater } from 'lucide-react';
 
 export const App: React.FC = () => {
-  // State
-  const [lang, setLang] = useState<Language>('it');
+  // State: Default English and US Country
+  const [lang, setLang] = useState<Language>('en');
+  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(DEFAULT_COUNTRY);
   const [selectedCocktailId, setSelectedCocktailId] = useState<string>('negroni');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedTaste, setSelectedTaste] = useState<TasteCategory>('all');
@@ -31,6 +33,7 @@ export const App: React.FC = () => {
   });
 
   const t = TRANSLATIONS[lang];
+  const currentCountryConfig = COUNTRIES[selectedCountry] || COUNTRIES.US;
 
   // Scroll listener for back-to-top button
   useEffect(() => {
@@ -119,7 +122,6 @@ export const App: React.FC = () => {
   const handleSelectCocktail = (cocktail: Cocktail) => {
     setSelectedCocktailId(cocktail.id);
     setPartyConfig((prev) => ({ ...prev, cocktailId: cocktail.id }));
-    // Scroll smoothly to configurator/results
     const element = document.getElementById('planner-dashboard');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -161,10 +163,12 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F0F0F0] flex flex-col justify-between relative">
-      {/* Top Header (Streamlined: Title, Made By & Language Switcher) */}
+      {/* Top Header with Country Market & 6-Language Switcher */}
       <Header
         lang={lang}
         onToggleLang={setLang}
+        selectedCountry={selectedCountry}
+        onSelectCountry={setSelectedCountry}
       />
 
       {/* Hero & Search Banner with Bauhaus Semiotics and Brand Tier Selector */}
@@ -223,7 +227,7 @@ export const App: React.FC = () => {
               {t.resultsHeader.stepTitle(selectedCocktail.name)}
             </h3>
             <span className="text-xs font-black uppercase bg-[#F0C020] px-3 py-1 border-2 border-[#121212] shadow-[2px_2px_0px_0px_#121212] self-start sm:self-auto">
-              {partyResult.servingsSummary} • ~€{partyResult.costPerPerson.toFixed(2)}/{lang === 'it' ? 'persona' : 'guest'}
+              {partyResult.totalDrinks} {t.configurator.drinksTotal} • ~{formatCurrency(partyResult.costPerPerson, currentCountryConfig)} {t.shopping.perGuestSuffix}
             </span>
           </div>
 
@@ -235,6 +239,7 @@ export const App: React.FC = () => {
                 config={partyConfig}
                 result={partyResult}
                 lang={lang}
+                country={currentCountryConfig}
               />
             </div>
 
