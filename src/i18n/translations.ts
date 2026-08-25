@@ -138,6 +138,7 @@ export interface Translations {
     tagline: string;
     credit: string;
     disclaimer: string;
+    backToTop: string;
   };
 }
 
@@ -280,6 +281,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       tagline: 'Cocktail Party Planner • Costruttivismo Bauhaus & Mixology',
       credit: 'Creato per celebrare l\'arte della miscelazione casalinga senza sprechi.',
       disclaimer: 'Bevi responsabilmente. Drink responsibly.',
+      backToTop: 'Torna all\'Inizio',
     },
   },
   en: {
@@ -420,6 +422,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       tagline: 'Cocktail Party Planner • Bauhaus Constructivism & Mixology',
       credit: 'Created to celebrate the art of zero-waste home bartending.',
       disclaimer: 'Bevi responsabilmente. Drink responsibly.',
+      backToTop: 'Back to Top',
     },
   },
 };

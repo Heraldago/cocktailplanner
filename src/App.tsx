@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { COCKTAILS_DATABASE } from './data/cocktails';
 import { Cocktail, BrandTier, PartyIntensity } from './types/cocktail';
 import { calculatePartyRequirements } from './utils/partyCalculator';
@@ -12,7 +12,7 @@ import { ShoppingCard } from './components/ShoppingCard';
 import { EquipmentCard } from './components/EquipmentCard';
 import { PreparationCard } from './components/PreparationCard';
 import { Footer } from './components/Footer';
-import { ArrowDown, GlassWater } from 'lucide-react';
+import { ArrowDown, ArrowUp, GlassWater } from 'lucide-react';
 
 export const App: React.FC = () => {
   // State
@@ -21,6 +21,7 @@ export const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedTaste, setSelectedTaste] = useState<TasteCategory>('all');
   const [selectedStrength, setSelectedStrength] = useState<StrengthCategory>('all');
+  const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [partyConfig, setPartyConfig] = useState({
     cocktailId: 'negroni',
     guestsCount: 8,
@@ -30,6 +31,19 @@ export const App: React.FC = () => {
   });
 
   const t = TRANSLATIONS[lang];
+
+  // Scroll listener for back-to-top button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Selected cocktail reference
   const selectedCocktail = useMemo(() => {
@@ -141,6 +155,10 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-[#F0F0F0] flex flex-col justify-between relative">
       {/* Top Header */}
@@ -242,17 +260,34 @@ export const App: React.FC = () => {
         </section>
       </main>
 
-      {/* Mobile Floating Action Button (FAB) for fast navigation to planner */}
-      <div className="fixed bottom-4 right-4 z-40 sm:hidden">
-        <button
-          type="button"
-          onClick={handleScrollToDashboard}
-          className="flex items-center gap-2 bg-[#D02020] text-white px-3.5 py-2.5 border-2 border-[#121212] shadow-[4px_4px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 font-black uppercase text-xs"
-        >
-          <GlassWater className="w-4 h-4 text-[#F0C020]" />
-          <span>{selectedCocktail.name}</span>
-          <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
-        </button>
+      {/* Floating Action Buttons Area */}
+      <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+        {/* Mobile Fast Jump to Selected Cocktail Dashboard */}
+        <div className="sm:hidden">
+          <button
+            type="button"
+            onClick={handleScrollToDashboard}
+            className="flex items-center gap-2 bg-[#D02020] text-white px-3.5 py-2.5 border-2 border-[#121212] shadow-[4px_4px_0px_0px_#121212] active:translate-x-0.5 active:translate-y-0.5 font-black uppercase text-xs cursor-pointer select-none"
+          >
+            <GlassWater className="w-4 h-4 text-[#F0C020]" />
+            <span>{selectedCocktail.name}</span>
+            <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
+          </button>
+        </div>
+
+        {/* Global Floating Back-to-Top Button (Appears on Scroll) */}
+        {showScrollTop && (
+          <button
+            type="button"
+            onClick={handleScrollToTop}
+            className="p-2.5 sm:px-3 sm:py-2 bg-[#F0C020] hover:bg-[#F0C020]/90 text-[#121212] border-2 border-[#121212] shadow-[4px_4px_0px_0px_#121212] hover:shadow-[5px_5px_0px_0px_#D02020] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1.5 font-black uppercase text-xs cursor-pointer select-none animate-fadeIn"
+            title={t.footer.backToTop}
+            aria-label={t.footer.backToTop}
+          >
+            <ArrowUp className="w-4 h-4 text-[#121212]" />
+            <span className="hidden md:inline">{t.footer.backToTop}</span>
+          </button>
+        )}
       </div>
 
       {/* Footer */}
