@@ -161,16 +161,13 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F0F0F0] flex flex-col justify-between relative">
-      {/* Top Header */}
+      {/* Top Header (Streamlined: Title, Made By & Language Switcher) */}
       <Header
-        brandTier={partyConfig.brandTier}
-        onToggleBrandTier={handleToggleBrandTier}
-        totalCocktailsCount={COCKTAILS_DATABASE.length}
         lang={lang}
         onToggleLang={setLang}
       />
 
-      {/* Hero & Search Banner with Bauhaus Semiotics */}
+      {/* Hero & Search Banner with Bauhaus Semiotics and Brand Tier Selector */}
       <HeroSearch
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -178,6 +175,8 @@ export const App: React.FC = () => {
         onTasteChange={setSelectedTaste}
         selectedStrength={selectedStrength}
         onStrengthChange={setSelectedStrength}
+        brandTier={partyConfig.brandTier}
+        onBrandTierChange={handleToggleBrandTier}
         onQuickSelect={(id) => {
           const found = COCKTAILS_DATABASE.find((c) => c.id === id);
           if (found) handleSelectCocktail(found);
